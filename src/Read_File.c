@@ -32,39 +32,40 @@ void *closeFileInTxt(InStream *fileDirectory){
 char *readFileInTxt(InStream *getByte, char *buffer){
   
   fread((buffer), sizeof(buffer), 1, getByte->file);
-  printf("%s\n", buffer);
+  //printf("%s\n", buffer);
 
   return buffer;
 }
 
 uint32_t readBit(InStream *getBit){
   int returnBit = 0;
-  int mask = 1;
+  uint32_t mask = 1;
   
   returnBit = (getBit->byteIndex >> getBit->bitIndex) & mask;
   getBit->bitIndex--;
-
+// printf("%x\n", returnBit);
   return returnBit;
   
 }
 
 uint32_t readBits(InStream *getBit, int bitSize){
   uint32_t readChar;
-  uint32_t returnBits;
+  uint32_t returnBits = 0;
   int i;
-  getBit->bitIndex = 7;
+  getBit->bitIndex = bitSize - 1;
   
-  for(i = bitSize; i < 0; i--){
-    if(getBit->bitIndex < 0){
-      if(!feof(getBit->file)){
-        fread(&(getBit->byteIndex), 1, 1, getBit->file);
-        getBit->bitIndex = 7;
-      }
-      readChar = readBit(getBit);
-      returnBits = returnBits | (readChar >> i);
+  for(i = bitSize; i > 0; i--){
+    if(feof(getBit->file) != 1){
+      fread(&(getBit->byteIndex), 1, 1, getBit->file);
     }
+    // printf("fread: %x\n", getBit->byteIndex);
+    readChar = readBit(getBit);
+    returnBits = returnBits | (readChar << (i - 1));
+    // printf("read char: %x\n", readChar);
+    // printf("return bits: %x\n", returnBits);
   }
-  
+    // printf("returnBit %x\n", returnBits);
+  // returnBits = returnBits & 0xffff;
   return returnBits;
 }
 

@@ -107,15 +107,68 @@ void test_read_bit_byteIndex_25(void){
   
 }
 
-void test_read_bits(void){
+void test_read_bit_byteIndex_a(void){
   InStream *myFile;
   int getRead;
+     
+  myFile->byteIndex = 'a';
+  myFile->bitIndex = 0;
   
+  getRead = readBit(myFile);
+  TEST_ASSERT_EQUAL(1, getRead);
+  
+  myFile->bitIndex = 1;
+  getRead = readBit(myFile);
+  TEST_ASSERT_EQUAL(0, getRead);
+  
+  myFile->bitIndex = 2;
+  getRead = readBit(myFile);
+  TEST_ASSERT_EQUAL(0, getRead);
+  
+  myFile->bitIndex = 3;
+  getRead = readBit(myFile);
+  TEST_ASSERT_EQUAL(0, getRead);
+  
+  myFile->bitIndex = 4;
+  getRead = readBit(myFile);
+  TEST_ASSERT_EQUAL(0, getRead);  
+  
+  myFile->bitIndex = 5;
+  getRead = readBit(myFile);
+  TEST_ASSERT_EQUAL(1, getRead);
+  
+  myFile->bitIndex = 6;
+  getRead = readBit(myFile);
+  TEST_ASSERT_EQUAL(1, getRead);
+  
+  myFile->bitIndex = 7;
+  getRead = readBit(myFile);
+  TEST_ASSERT_EQUAL(0, getRead);
+  
+}
+
+void test_read_bits_a(void){
+  InStream *myFile;
+  int getRead;
+
   myFile = openFile("test/Data/FirstTry.txt", "rb");
+  getRead = readBits(myFile, 8);
+
+  TEST_ASSERT_EQUAL_HEX8(0x61, getRead);
+  TEST_ASSERT_EQUAL(0b01100001 , getRead);
+  
+  closeFileInTxt(myFile);
+}
+
+void test_read_bits_ABCD(void){
+  InStream *myFile;
+  int getRead;
+
+  printf("******************\n");
+  myFile = openFile("test/Data/ThirdTry.txt", "rb");
   getRead = readBits(myFile, 16);
   printf("%x", getRead);
-  
-  TEST_ASSERT_EQUAL(0x4241, getRead);
+  TEST_ASSERT_EQUAL(0x4142, getRead);
   
   closeFileInTxt(myFile);
 }
