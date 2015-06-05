@@ -32,7 +32,7 @@ void *closeFileInTxt(InStream *fileDirectory){
 char *readFileInTxt(InStream *getByte, char *buffer){
   
   fread((buffer), sizeof(buffer), 1, getByte->file);
-  //printf("%s\n", buffer);
+  // printf("%x\n", sizeof(buffer));
 
   return buffer;
 }
@@ -43,7 +43,6 @@ uint32_t readBit(InStream *getBit){
   
   returnBit = (getBit->byteIndex >> getBit->bitIndex) & mask;
   getBit->bitIndex--;
-// printf("%x\n", returnBit);
   return returnBit;
   
 }
@@ -56,19 +55,49 @@ uint32_t readBits(InStream *getBit, int bitSize){
   
   for(i = bitSize; i > 0; i--){
     if(feof(getBit->file) != 1){
-      fread(&(getBit->byteIndex), 1, 1, getBit->file);
+      fread(&(getBit->byteIndex), (sizeof(getBit->byteIndex)), 1, getBit->file);
     }
-    // printf("fread: %x\n", getBit->byteIndex);
     readChar = readBit(getBit);
     returnBits = returnBits | (readChar << (i - 1));
-    // printf("read char: %x\n", readChar);
-    // printf("return bits: %x\n", returnBits);
   }
-    // printf("returnBit %x\n", returnBits);
-  // returnBits = returnBits & 0xffff;
   return returnBits;
 }
 
+uint32_t oneByte(InStream *getByte){
+  uint32_t returnBits;
 
+  returnBits = readBits(getByte, 8);
+  return returnBits;
+}
+
+uint32_t twoByte(InStream *getByte){
+  uint32_t returnBits;
+
+  returnBits = readBits(getByte, 16);
+  return returnBits;
+}
+
+uint32_t fourByte(InStream *getByte){
+  uint32_t returnBits;
+
+  returnBits = readBits(getByte, 32);
+  return returnBits;
+}
+
+uint32_t byteSelection(InStream *getByte, int inputByte){
+  uint32_t returnBits;
+  
+  if(inputByte == 1){
+    returnBits = oneByte(getByte);
+  }else if(inputByte == 2){
+    returnBits = twoByte(getByte);
+  }else if(inputByte == 4){
+    returnBits = fourByte(getByte);
+  }else{
+    Throw(ERR_BYTE_SELECTION);
+  }
+  
+  return returnBits;
+}
 
 

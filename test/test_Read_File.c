@@ -36,7 +36,7 @@ void test_read_file_in_txt(void){
   myFile = openFile("test/Data/SecondTry.txt", "rb");
   
   readFileInTxt(myFile, getRead);
-  printf("Return string : %s\n", &(getRead));
+  // printf("Return string : %s\n", &(getRead));
   
   closeFileInTxt(myFile);
   
@@ -164,18 +164,72 @@ void test_read_bits_ABCD(void){
   InStream *myFile;
   int getRead;
 
-  printf("******************\n");
   myFile = openFile("test/Data/ThirdTry.txt", "rb");
   getRead = readBits(myFile, 16);
-  printf("%x", getRead);
-  TEST_ASSERT_EQUAL(0x4142, getRead);
+  TEST_ASSERT_EQUAL(0x4241, getRead);
   
   closeFileInTxt(myFile);
 }
 
+void test_byteSelection_with_1_byte(void){
+  InStream *myFile;
+  int getRead;
 
+  myFile = openFile("test/Data/FourthTry.txt", "rb");
+  getRead = byteSelection(myFile, 1);
+  TEST_ASSERT_EQUAL(0x43, getRead);
+  
+  closeFileInTxt(myFile);
+}
 
+void test_byteSelection_with_2_byte(void){
+  InStream *myFile;
+  int getRead;
 
+  myFile = openFile("test/Data/ThirdTry.txt", "rb");
+  getRead = byteSelection(myFile, 2);
+  TEST_ASSERT_EQUAL(0x4241, getRead);
+  
+  closeFileInTxt(myFile);
+}
 
+void test_byteSelection_with_4_byte(void){
+  InStream *myFile;
+  uint32_t getRead;
+
+  myFile = openFile("test/Data/FifthTry.txt", "rb");
+  getRead = byteSelection(myFile, 4);
+  TEST_ASSERT_EQUAL(0x44434241, getRead);
+  
+  closeFileInTxt(myFile);
+}
+
+void test_byteSelection_with_invalid_byte_should_throw_error(void){
+  InStream *myFile;
+  uint32_t getRead;
+  ErrorCode e;
+  
+  Try{
+    myFile = openFile("test/Data/FifthTry.txt", "rb");
+    getRead = byteSelection(myFile, 8);
+  }Catch(e){
+    TEST_ASSERT_EQUAL(ERR_BYTE_SELECTION, e);
+  }
+  
+}
+/*
+void test_byteSelection_with_elf_file(void){
+  InStream *myFile;
+  uint32_t getRead;
+
+  myFile = openFile("test/ELF_File/Test01.elf", "rb");
+  getRead = readBits(myFile, 16);
+  //getRead = byteSelection(myFile, 1);
+  printf("%x", getRead);
+  TEST_ASSERT_EQUAL(0x7f, getRead);
+  
+  closeFileInTxt(myFile);
+}
+*/
 
 

@@ -3,6 +3,7 @@
 
 typedef enum{
 	ERR_FILE_NOT_EXIST,
+	ERR_BYTE_SELECTION,
 } ErrorCode;
 
 

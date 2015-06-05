@@ -18,5 +18,9 @@ void *closeFileInTxt(InStream *fileDirectory);
 char *readFileInTxt(InStream *getByte, char *buffer);
 uint32_t readBit(InStream *getBit);
 uint32_t readBits(InStream *getBit, int bitSize);
+uint32_t oneByte(InStream *getByte);
+uint32_t twoByte(InStream *getByte);
+uint32_t fourByte(InStream *getByte);
+uint32_t byteSelection(InStream *getByte, int inputByte);
 
 #endif // Read_File_H
