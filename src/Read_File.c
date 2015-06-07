@@ -16,7 +16,7 @@ InStream *openFile(char *fileDirectory, char *mode){
   
   myFile->filename = fileDirectory;
   myFile->byteIndex = 0;
-  myFile->bitIndex = 0;
+  myFile->bitIndex = 8;
 
   return myFile;
 
@@ -39,27 +39,30 @@ char *readFileInTxt(InStream *getByte, char *buffer){
 
 uint32_t readBit(InStream *getBit){
   int returnBit = 0;
-  uint32_t mask = 1;
+  int mask = 1;
   
   returnBit = (getBit->byteIndex >> getBit->bitIndex) & mask;
-  getBit->bitIndex--;
-  return returnBit;
   
+  return returnBit;
 }
 
 uint32_t readBits(InStream *getBit, int bitSize){
-  uint32_t readChar;
+  uint32_t readChar = 0;
   uint32_t returnBits = 0;
   int i;
-  getBit->bitIndex = bitSize - 1;
   
-  for(i = bitSize; i > 0; i--){
-    if(feof(getBit->file) != 1){
-      fread(&(getBit->byteIndex), (sizeof(getBit->byteIndex)), 1, getBit->file);
+  for(i = 0; i < bitSize; i++){
+    while(getBit->bitIndex == 8){
+      if(feof(getBit->file) != 1){
+        fread(&(getBit->byteIndex), sizeof(getBit->byteIndex), 1, getBit->file);
+      getBit->bitIndex = 0;
+      }
     }
     readChar = readBit(getBit);
-    returnBits = returnBits | (readChar << (i - 1));
+    returnBits = returnBits | (readChar << i);
+    getBit->bitIndex++;
   }
+  
   return returnBits;
 }
 

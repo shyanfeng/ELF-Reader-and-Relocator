@@ -166,7 +166,20 @@ void test_read_bits_ABCD(void){
 
   myFile = openFile("test/Data/ThirdTry.txt", "rb");
   getRead = readBits(myFile, 16);
+
   TEST_ASSERT_EQUAL(0x4241, getRead);
+  
+  closeFileInTxt(myFile);
+}
+
+void test_read_bits_ABCDEFGH(void){
+  InStream *myFile;
+  int getRead;
+
+  myFile = openFile("test/Data/SixthTry.txt", "rb");
+  getRead = readBits(myFile, 32);
+
+  TEST_ASSERT_EQUAL(0x44434241, getRead);
   
   closeFileInTxt(myFile);
 }
@@ -217,19 +230,71 @@ void test_byteSelection_with_invalid_byte_should_throw_error(void){
   }
   
 }
-/*
-void test_byteSelection_with_elf_file(void){
+
+
+void test_binary_with_1_byte(void){
+  InStream *myFile;
+  uint32_t getRead;
+
+  myFile = openFile("test/Data/BinaryTry.txt", "rb");
+  getRead = byteSelection(myFile, 2);
+
+  TEST_ASSERT_EQUAL(0x677f, getRead);
+  
+  closeFileInTxt(myFile);
+}
+
+
+void test_byteSelection_2_with_elf_file(void){
   InStream *myFile;
   uint32_t getRead;
 
   myFile = openFile("test/ELF_File/Test01.elf", "rb");
-  getRead = readBits(myFile, 16);
-  //getRead = byteSelection(myFile, 1);
-  printf("%x", getRead);
-  TEST_ASSERT_EQUAL(0x7f, getRead);
+  getRead = byteSelection(myFile, 2);
+
+  TEST_ASSERT_EQUAL(0x457f, getRead);
   
   closeFileInTxt(myFile);
 }
-*/
+
+void test_byteSelection_4_with_elf_file(void){
+  InStream *myFile;
+  uint32_t getRead;
+
+  myFile = openFile("test/ELF_File/Test01.elf", "rb");
+  getRead = byteSelection(myFile, 4);
+  
+  TEST_ASSERT_EQUAL(0x464c457f, getRead);
+  
+  closeFileInTxt(myFile);
+}
+
+void test_byteSelection_2 line_with_elf_file(void){
+  InStream *myFile;
+  uint32_t getRead;
+
+  myFile = openFile("test/ELF_File/Test01.elf", "rb");
+  
+  getRead = byteSelection(myFile, 4);
+  getRead = byteSelection(myFile, 4);
+  getRead = byteSelection(myFile, 4);
+  getRead = byteSelection(myFile, 4);
+  getRead = byteSelection(myFile, 4);
+  getRead = byteSelection(myFile, 4);
+  getRead = byteSelection(myFile, 4);
+  getRead = byteSelection(myFile, 4);
+  
+  // TEST_ASSERT_EQUAL(0x464c457f, getRead);
+  // TEST_ASSERT_EQUAL(0x00010101, getRead);
+  // TEST_ASSERT_EQUAL(0x00000000, getRead);
+  // TEST_ASSERT_EQUAL(0x00000000, getRead);
+  // TEST_ASSERT_EQUAL(0x00280002, getRead);
+  // TEST_ASSERT_EQUAL(0x00000001, getRead);
+  // TEST_ASSERT_EQUAL(0x08000fed, getRead);
+  
+  TEST_ASSERT_EQUAL(0x00000034, getRead);
+  
+  closeFileInTxt(myFile);
+}
 
 
