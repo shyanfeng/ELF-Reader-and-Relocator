@@ -269,7 +269,7 @@ void test_byteSelection_4_with_elf_file(void){
   closeFileInTxt(myFile);
 }
 
-void test_byteSelection_2 line_with_elf_file(void){
+void test_byteSelection_2_line_with_elf_file(void){
   InStream *myFile;
   uint32_t getRead;
 
@@ -283,6 +283,10 @@ void test_byteSelection_2 line_with_elf_file(void){
   getRead = byteSelection(myFile, 4);
   getRead = byteSelection(myFile, 4);
   getRead = byteSelection(myFile, 4);
+  
+  // while(feof(myFile->file) != 1){
+    // getRead = byteSelection(myFile, 1);
+  // }
   
   // TEST_ASSERT_EQUAL(0x464c457f, getRead);
   // TEST_ASSERT_EQUAL(0x00010101, getRead);
