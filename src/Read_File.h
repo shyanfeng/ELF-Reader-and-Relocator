@@ -6,6 +6,12 @@
 
 typedef struct InStream InStream;
 
+#define moveStart(filePtr, offset) fseek(filePtr, offset, SEEK_SET)
+#define readADDR(filePtr, offset, y, return) fseek(filePtr, offset, SEEK_SET); return = fgetc(y->file);
+#define moveCurrent(filePtr, offset) fseek(filePtr, offset, SEEK_CUR)
+#define moveEnd(filePtr, offset) fseek(filePtr, offset, SEEK_END)
+
+
 struct InStream{
   FILE *file;
   char *filename;
@@ -16,11 +22,19 @@ struct InStream{
 InStream *openFile(char *fileDirectory, char *mode);
 void *closeFileInTxt(InStream *fileDirectory);
 char *readFileInTxt(InStream *getByte, char *buffer);
+
 uint32_t readBit(InStream *getBit);
 uint32_t readBits(InStream *getBit, int bitSize);
 uint32_t oneByte(InStream *getByte);
 uint32_t twoByte(InStream *getByte);
 uint32_t fourByte(InStream *getByte);
 uint32_t byteSelection(InStream *getByte, int inputByte);
+
+uint32_t movStart(InStream *getFile, long int posStart);
+uint32_t movCurrent(InStream *getFile, long int posStart);
+uint32_t movEnd(InStream *getFile, long int posEnd);
+uint32_t posPtr(InStream *getFile);
+
+unsigned int getElfIdentification(InStream *getId, int byteSize);
 
 #endif // Read_File_H

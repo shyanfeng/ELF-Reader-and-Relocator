@@ -3,7 +3,7 @@
 #include <malloc.h>
 #include "CException.h"
 #include "ErrorCode.h"
-// #include "elf.h"
+#include "elf.h"
 
 InStream *openFile(char *fileDirectory, char *mode){
   InStream *myFile = (InStream *)malloc(sizeof(InStream));
@@ -102,5 +102,75 @@ uint32_t byteSelection(InStream *getByte, int inputByte){
   
   return returnBits;
 }
+
+uint32_t movStart(InStream *getFile, long int posStart){
+  int startPos;
+  
+  startPos = fseek(getFile->file, posStart, SEEK_SET);
+  
+  if(startPos == 1){
+    Throw(ERR_RANGE_OFFSET);
+  }else{
+    return startPos;
+  }
+  
+}
+
+uint32_t movCurrent(InStream *getFile, long int posStart){
+  int currentPos;
+  
+  currentPos = fseek(getFile->file, posStart, SEEK_CUR);
+  
+  if(currentPos == 1){
+    Throw(ERR_RANGE_OFFSET);
+  }else{
+    return currentPos;
+  }
+  
+}
+
+uint32_t movEnd(InStream *getFile, long int posEnd){
+  int endPos;
+  long int ptrPosition;
+  
+  endPos = fseek(getFile->file, posEnd, SEEK_END);
+  
+  if(endPos == 1){
+    Throw(ERR_RANGE_OFFSET);
+  }else{
+    return endPos;
+  }
+  
+}
+
+uint32_t posPtr(InStream *getFile){
+  long int ptrPosition;
+  
+  ptrPosition = ftell(getFile->file);
+  return ptrPosition;
+
+}
+
+unsigned int getElfIdentification(InStream *getId, int byteSize){
+  Elf32_Ehdr *e;
+  int i;
+  
+  // e->e_ident[EI_MAG0] = ELFMAG0;
+  // e->e_ident[EI_MAG1] = ELFMAG1;
+  // e->e_ident[EI_MAG2] = ELFMAG2;
+  // e->e_ident[EI_MAG3] = ELFMAG3;
+  
+  for(i = 0; i < byteSize; i++){
+    e->e_ident[i] = byteSelection(getId, 1);
+    printf("%x", e->e_ident[i]);
+  }
+  
+  return e->e_ident;
+}
+
+
+
+
+
 
 

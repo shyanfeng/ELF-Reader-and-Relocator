@@ -301,4 +301,84 @@ void test_byteSelection_2_line_with_elf_file(void){
   closeFileInTxt(myFile);
 }
 
+void test_mov_start_elf_file(void){
+  InStream *myFile;
+  long int startPosition;
+  long int endPosition;
+  int ptrPosition;
+  uint32_t getRead;
+
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movStart(myFile, 33216);
+  getRead = byteSelection(myFile, 4);
+  printf("startPosition : %d, read = %x\n", startPosition, getRead);
+  
+  getRead = byteSelection(myFile, 4);
+  printf("read = %x\n", getRead);
+  
+  getRead = byteSelection(myFile, 4);
+  printf("read = %x\n", getRead);
+  
+  getRead = byteSelection(myFile, 4);
+  printf("read = %x\n", getRead);
+  
+  endPosition = moveEnd(myFile->file, -54014);
+  getRead = byteSelection(myFile, 1);
+  printf("position: %d, getRead: %x\n", endPosition, getRead);	
+  TEST_ASSERT_EQUAL(0, endPosition);
+  
+  closeFileInTxt(myFile);
+}
+
+void test_seek_file(void){
+  InStream *myFile;
+  int pos;
+  char ret;
+  long int currentPosition;
+  long int endPosition;
+  uint32_t getRead;
+
+  myFile = openFile("test/Data/Message.txt", "rb+");
+  pos = moveStart(myFile->file, 8);
+  currentPosition = ftell(myFile->file);
+  getRead = byteSelection(myFile, 1);
+  printf("ptr : %d", currentPosition);
+  TEST_ASSERT_EQUAL(0, pos);
+  
+  pos = moveEnd(myFile->file, -1);
+  TEST_ASSERT_EQUAL(0, pos);
+  
+  closeFileInTxt(myFile);
+}
+
+void test_getElfIdentification(void){
+  InStream *myFile;
+  unsigned int getID;
+  int startPosition;
+  int curPosition;
+  long int ptr;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movStart(myFile, 0);
+  getID = getElfIdentification(myFile, 4); // Magic
+  
+  curPosition = movCurrent(myFile, 0);
+  getID = getElfIdentification(myFile, 1); // Class
+  
+  curPosition = movCurrent(myFile, 0);
+  getID = getElfIdentification(myFile, 1); // Data
+  
+  curPosition = movCurrent(myFile, 0);
+  getID = getElfIdentification(myFile, 1); // Version
+  
+  curPosition = movCurrent(myFile, 0);
+  getID = getElfIdentification(myFile, 1); // OS/ABI
+  
+  curPosition = movCurrent(myFile, 0);
+  getID = getElfIdentification(myFile, 1); // ABI version
+  
+  // printf("getId: %x", getID);
+  
+  closeFileInTxt(myFile);
+}
 
