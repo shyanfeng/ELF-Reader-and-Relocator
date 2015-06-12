@@ -311,20 +311,20 @@ void test_mov_start_elf_file(void){
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   startPosition = movStart(myFile, 33216);
   getRead = byteSelection(myFile, 4);
-  printf("startPosition : %d, read = %x\n", startPosition, getRead);
+  // printf("startPosition : %d, read = %x\n", startPosition, getRead);
   
   getRead = byteSelection(myFile, 4);
-  printf("read = %x\n", getRead);
+  // printf("read = %x\n", getRead);
   
   getRead = byteSelection(myFile, 4);
-  printf("read = %x\n", getRead);
+  // printf("read = %x\n", getRead);
   
   getRead = byteSelection(myFile, 4);
-  printf("read = %x\n", getRead);
+  // printf("read = %x\n", getRead);
   
   endPosition = moveEnd(myFile->file, -54014);
   getRead = byteSelection(myFile, 1);
-  printf("position: %d, getRead: %x\n", endPosition, getRead);	
+  // printf("position: %d, getRead: %x\n", endPosition, getRead);	
   TEST_ASSERT_EQUAL(0, endPosition);
   
   closeFileInTxt(myFile);
@@ -342,7 +342,7 @@ void test_seek_file(void){
   pos = moveStart(myFile->file, 8);
   currentPosition = ftell(myFile->file);
   getRead = byteSelection(myFile, 1);
-  printf("ptr : %d", currentPosition);
+  // printf("ptr : %d", currentPosition);
   TEST_ASSERT_EQUAL(0, pos);
   
   pos = moveEnd(myFile->file, -1);
@@ -351,34 +351,325 @@ void test_seek_file(void){
   closeFileInTxt(myFile);
 }
 
-void test_getElfIdentification(void){
+void test_getElfMagic(void){
   InStream *myFile;
-  unsigned int getID;
+  Elf32_Ehdr e;
   int startPosition;
   int curPosition;
-  long int ptr;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   startPosition = movStart(myFile, 0);
-  getID = getElfIdentification(myFile, 4); // Magic
+  getElfMagic(myFile, 4, &e); // Magic
+  printf("%x", e.e_ident[0]);
+  printf("%x", e.e_ident[1]);
+  printf("%x", e.e_ident[2]);
+  printf("%x", e.e_ident[3]);
   
-  curPosition = movCurrent(myFile, 0);
-  getID = getElfIdentification(myFile, 1); // Class
+  TEST_ASSERT_EQUAL_HEX8(ELFMAG0, e.e_ident[EI_MAG0]);
+  TEST_ASSERT_EQUAL_HEX8(ELFMAG1, e.e_ident[EI_MAG1]);
+  TEST_ASSERT_EQUAL_HEX8(ELFMAG2, e.e_ident[EI_MAG2]);
+  TEST_ASSERT_EQUAL_HEX8(ELFMAG3, e.e_ident[EI_MAG3]);
   
-  curPosition = movCurrent(myFile, 0);
-  getID = getElfIdentification(myFile, 1); // Data
+  closeFileInTxt(myFile);
+}
+
+void test_getElfClass(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
   
-  curPosition = movCurrent(myFile, 0);
-  getID = getElfIdentification(myFile, 1); // Version
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 4);
+  getElfClass(myFile, &e); // Class
+  printf("%x", e.e_ident[EI_CLASS]);
   
-  curPosition = movCurrent(myFile, 0);
-  getID = getElfIdentification(myFile, 1); // OS/ABI
+  TEST_ASSERT_EQUAL_HEX8(ELFCLASS32, e.e_ident[EI_CLASS]);
   
-  curPosition = movCurrent(myFile, 0);
-  getID = getElfIdentification(myFile, 1); // ABI version
+  closeFileInTxt(myFile);
+}
+
+void test_getElfData(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
   
-  // printf("getId: %x", getID);
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 5);
+  getElfData(myFile, &e); // Data
+  printf("%x", e.e_ident[EI_DATA]);
   
+  TEST_ASSERT_EQUAL_HEX8(ELFDATA2LSB, e.e_ident[EI_DATA]);
+  
+  closeFileInTxt(myFile);
+}
+
+void test_getElfVERSION(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 6);
+  getElfVERSION(myFile, &e); // Version
+  printf("%x", e.e_ident[EI_VERSION]);
+  
+  TEST_ASSERT_EQUAL_HEX8(EV_CURRENT, e.e_ident[EI_VERSION]);
+  
+  closeFileInTxt(myFile);
+}
+
+void test_getElfOSABI(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 7);
+  getElfOSABI(myFile, &e); // OSABI
+  printf("%x", e.e_ident[EI_OSABI]);
+  
+  TEST_ASSERT_EQUAL_HEX8(ELFOSABI_SYSV, e.e_ident[EI_OSABI]);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfABIVersion(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 8);
+  getElfABIVersion(myFile, &e); // ABIVersion
+  printf("%x", e.e_ident[EI_ABIVERSION]);
+  
+  TEST_ASSERT_EQUAL_HEX8(0, e.e_ident[EI_ABIVERSION]);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfPAD(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 9);
+  getElfPAD(myFile, &e); // Pad
+  printf("%x", e.e_ident[9]);
+  printf("%x", e.e_ident[10]);
+  printf("%x", e.e_ident[11]);
+  printf("%x", e.e_ident[12]);
+  printf("%x", e.e_ident[13]);
+  printf("%x", e.e_ident[14]);
+  printf("%x", e.e_ident[15]);
+  
+  TEST_ASSERT_EQUAL_HEX8(0, e.e_ident[9]);
+  TEST_ASSERT_EQUAL_HEX8(0, e.e_ident[10]);
+  TEST_ASSERT_EQUAL_HEX8(0, e.e_ident[11]);
+  TEST_ASSERT_EQUAL_HEX8(0, e.e_ident[12]);
+  TEST_ASSERT_EQUAL_HEX8(0, e.e_ident[13]);
+  TEST_ASSERT_EQUAL_HEX8(0, e.e_ident[14]);
+  TEST_ASSERT_EQUAL_HEX8(0, e.e_ident[15]);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfType(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 16);
+  getElfType(myFile, &e); // Type
+  printf("%x", e.e_type);
+
+  
+  TEST_ASSERT_EQUAL_HEX16(ET_EXEC, e.e_type);
+
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfMachine(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 18);
+  getElfMachine(myFile, &e); // Machine
+  printf("%x", e.e_machine);
+
+  
+  TEST_ASSERT_EQUAL_HEX16(0x0028, e.e_machine);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfOriVersion(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 20);
+  getElfOriVersion(myFile, &e); // Machine
+  printf("%x", e.e_version);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000001, e.e_version);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfEntryPointAddress(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 24);
+  getElfEntryPointAddress(myFile, &e); // Machine
+  printf("%x", e.e_entry);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x08000fed, e.e_entry);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfStartOfProgramHeader(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 28);
+  getElfStartOfProgramHeader(myFile, &e); // Machine
+  printf("%x", e.e_phoff);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000034, e.e_phoff);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfStartOfSectionHeader(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 32);
+  getElfStartOfSectionHeader(myFile, &e); // Machine
+  printf("%x", e.e_shoff);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00013168, e.e_shoff);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfFlag(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 36);
+  getElfFlag(myFile, &e); // Machine
+  printf("%x", e.e_flags);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x05000202, e.e_flags);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfSizeOfHeader(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 40);
+  getElfSizeOfHeader(myFile, &e); // Machine
+  printf("%x", e.e_ehsize);
+  
+  TEST_ASSERT_EQUAL_HEX16(0x0034, e.e_ehsize);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfProgramHeaderSize(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 42);
+  getElfProgramHeaderSize(myFile, &e); // Machine
+  printf("%x", e.e_phentsize);
+  
+  TEST_ASSERT_EQUAL_HEX16(0x0020, e.e_phentsize);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfNumberOfProgramHeader(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 44);
+  getElfNumberOfProgramHeader(myFile, &e); // Machine
+  printf("%x", e.e_phnum);
+  
+  TEST_ASSERT_EQUAL_HEX16(0x0003, e.e_phnum);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfSectionHeaderSize(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 46);
+  getElfSectionHeaderSize(myFile, &e); // Machine
+  printf("%x", e.e_shentsize);
+  
+  TEST_ASSERT_EQUAL_HEX16(0x0028, e.e_shentsize);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfNumberOfSectionHeader(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 48);
+  getElfNumberOfSectionHeader(myFile, &e); // Machine
+  printf("%x", e.e_shnum);
+  
+  TEST_ASSERT_EQUAL_HEX16(0x0016, e.e_shnum);
+
+  closeFileInTxt(myFile);
+}
+
+void test_getElfSectionHeaderStringTableIndex(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 50);
+  getElfSectionHeaderStringTableIndex(myFile, &e); // Machine
+  printf("%x", e.e_shstrndx);
+  
+  TEST_ASSERT_EQUAL_HEX16(0x0013, e.e_shstrndx);
+
   closeFileInTxt(myFile);
 }
 

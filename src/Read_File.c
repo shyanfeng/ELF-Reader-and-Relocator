@@ -3,7 +3,7 @@
 #include <malloc.h>
 #include "CException.h"
 #include "ErrorCode.h"
-#include "elf.h"
+
 
 InStream *openFile(char *fileDirectory, char *mode){
   InStream *myFile = (InStream *)malloc(sizeof(InStream));
@@ -151,26 +151,90 @@ uint32_t posPtr(InStream *getFile){
 
 }
 
-unsigned int getElfIdentification(InStream *getId, int byteSize){
-  Elf32_Ehdr *e;
+void getElfMagic(InStream *getId, int byteSize, Elf32_Ehdr *e){
   int i;
-  
-  // e->e_ident[EI_MAG0] = ELFMAG0;
-  // e->e_ident[EI_MAG1] = ELFMAG1;
-  // e->e_ident[EI_MAG2] = ELFMAG2;
-  // e->e_ident[EI_MAG3] = ELFMAG3;
   
   for(i = 0; i < byteSize; i++){
     e->e_ident[i] = byteSelection(getId, 1);
-    printf("%x", e->e_ident[i]);
   }
-  
-  return e->e_ident;
 }
 
+void getElfClass(InStream *getId, Elf32_Ehdr *e){
+  e->e_ident[EI_CLASS] = byteSelection(getId, 1);
+}
 
+void getElfData(InStream *getId, Elf32_Ehdr *e){
+  e->e_ident[EI_DATA] = byteSelection(getId, 1);
+}
 
+void getElfVERSION(InStream *getId, Elf32_Ehdr *e){
+  e->e_ident[EI_VERSION] = byteSelection(getId, 1);
+}
 
+void getElfOSABI(InStream *getId, Elf32_Ehdr *e){
+  e->e_ident[EI_OSABI] = byteSelection(getId, 1);
+}
 
+void getElfABIVersion(InStream *getId, Elf32_Ehdr *e){
+  e->e_ident[EI_ABIVERSION] = byteSelection(getId, 1);
+}
 
+void getElfPAD(InStream *getId, Elf32_Ehdr *e){
+  int i;
+  
+  for(i = 9; i < 16; i++){
+    e->e_ident[i] = byteSelection(getId, 1);
+  }
+}
 
+void getElfType(InStream *getId, Elf32_Ehdr *e){
+  e->e_type = byteSelection(getId, 2);
+}
+
+void getElfMachine(InStream *getId, Elf32_Ehdr *e){
+  e->e_machine = byteSelection(getId, 2);
+}
+
+void getElfOriVersion(InStream *getId, Elf32_Ehdr *e){
+  e->e_version = byteSelection(getId, 4);
+}
+
+void getElfEntryPointAddress(InStream *getId, Elf32_Ehdr *e){
+  e->e_entry = byteSelection(getId, 4);
+}
+
+void getElfStartOfProgramHeader(InStream *getId, Elf32_Ehdr *e){
+  e->e_phoff = byteSelection(getId, 4);
+}
+
+void getElfStartOfSectionHeader(InStream *getId, Elf32_Ehdr *e){
+  e->e_shoff = byteSelection(getId, 4);
+}
+
+void getElfFlag(InStream *getId, Elf32_Ehdr *e){
+  e->e_flags = byteSelection(getId, 4);
+}
+
+void getElfSizeOfHeader(InStream *getId, Elf32_Ehdr *e){
+  e->e_ehsize = byteSelection(getId, 2);
+}
+
+void getElfProgramHeaderSize(InStream *getId, Elf32_Ehdr *e){
+  e->e_phentsize = byteSelection(getId, 2);
+}
+
+void getElfNumberOfProgramHeader(InStream *getId, Elf32_Ehdr *e){
+  e->e_phnum = byteSelection(getId, 2);
+}
+
+void getElfSectionHeaderSize(InStream *getId, Elf32_Ehdr *e){
+  e->e_shentsize = byteSelection(getId, 2);
+}
+
+void getElfNumberOfSectionHeader(InStream *getId, Elf32_Ehdr *e){
+  e->e_shnum = byteSelection(getId, 2);
+}
+
+void getElfSectionHeaderStringTableIndex(InStream *getId, Elf32_Ehdr *e){
+  e->e_shstrndx = byteSelection(getId, 2);
+}
