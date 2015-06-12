@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include "CException.h"
 #include "ErrorCode.h"
-
+/*
 void getProgramHeaderSegmentType(InStream *getId, Elf32_Phdr *e){
   int startPosition;
   startPosition = movCurrent(getId, 52);
@@ -52,7 +52,7 @@ void getProgramHeaderSegmentAlignment(InStream *getId, Elf32_Phdr *e){
   startPosition = movCurrent(getId, 80);
   e->p_align = byteSelection(getId, 4);
 }
-
+*/
 
 
 

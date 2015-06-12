@@ -7,6 +7,10 @@
 #include "Read_File.h"
 #include "elf.h"
 
+// Elf32_Ehdr create_ELF_Header();
+void read_ELF_File_Header(InStream *getId, Elf32_Ehdr *e);
+
+/*
 // File Identifier
 void getElfMagic(InStream *getId, int byteSize, Elf32_Ehdr *e);
 void getElfClass(InStream *getId, Elf32_Ehdr *e);
@@ -54,5 +58,5 @@ void getElfNumberOfSectionHeader(InStream *getId, Elf32_Ehdr *e);
 
 // Section header string table index
 void getElfSectionHeaderStringTableIndex(InStream *getId, Elf32_Ehdr *e);
-
+*/
 #endif // Get_File_Header_H

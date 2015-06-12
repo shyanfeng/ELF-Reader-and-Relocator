@@ -5,6 +5,26 @@
 #include "CException.h"
 #include "ErrorCode.h"
 
+// Elf32_Ehdr create_ELF_Header(){
+  // Elf32_Ehdr e = malloc(sizeof(Elf32_Ehdr));
+  
+  // return e;
+// }
+
+void read_ELF_File_Header(InStream *getId, Elf32_Ehdr *e){
+  int buffer = malloc(sizeof(Elf32_Ehdr));
+  e = buffer;
+  
+  int i;
+
+  for(i = 0; i < 16; i++){
+    e->e_ident[i] =  byteSelection(getId, 1);
+    printf("%x", e->e_ident[i]);
+  }
+  
+}
+
+/*
 void getElfMagic(InStream *getId, int byteSize, Elf32_Ehdr *e){
   int i;
   int startPosition;
@@ -131,3 +151,5 @@ void getElfSectionHeaderStringTableIndex(InStream *getId, Elf32_Ehdr *e){
   startPosition = movCurrent(getId, 50);
   e->e_shstrndx = byteSelection(getId, 2);
 }
+
+*/

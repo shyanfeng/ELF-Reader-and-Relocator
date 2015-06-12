@@ -8,6 +8,18 @@ void setUp(void){}
 
 void tearDown(void){}
 
+void test_read_ELF_File_Header(void){
+  InStream *myFile;
+  Elf32_Ehdr e;
+  int i;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  read_ELF_File_Header(myFile, &e);
+  
+  TEST_ASSERT_EQUAL_HEX8(ELFMAG0, e.e_ident[EI_MAG0]);
+}
+
+/*
 void test_getElfMagic(void){
   InStream *myFile;
   Elf32_Ehdr e;
@@ -306,3 +318,4 @@ void test_getElfSectionHeaderStringTableIndex(void){
   closeFileInTxt(myFile);
 }
 
+*/
