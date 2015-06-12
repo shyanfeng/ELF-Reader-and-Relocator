@@ -358,7 +358,6 @@ void test_getElfMagic(void){
   int curPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movStart(myFile, 0);
   getElfMagic(myFile, 4, &e); // Magic
   printf("%x", e.e_ident[0]);
   printf("%x", e.e_ident[1]);
@@ -379,7 +378,6 @@ void test_getElfClass(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 4);
   getElfClass(myFile, &e); // Class
   printf("%x", e.e_ident[EI_CLASS]);
   
@@ -394,7 +392,6 @@ void test_getElfData(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 5);
   getElfData(myFile, &e); // Data
   printf("%x", e.e_ident[EI_DATA]);
   
@@ -409,7 +406,6 @@ void test_getElfVERSION(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 6);
   getElfVERSION(myFile, &e); // Version
   printf("%x", e.e_ident[EI_VERSION]);
   
@@ -424,7 +420,6 @@ void test_getElfOSABI(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 7);
   getElfOSABI(myFile, &e); // OSABI
   printf("%x", e.e_ident[EI_OSABI]);
   
@@ -439,7 +434,6 @@ void test_getElfABIVersion(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 8);
   getElfABIVersion(myFile, &e); // ABIVersion
   printf("%x", e.e_ident[EI_ABIVERSION]);
   
@@ -454,7 +448,6 @@ void test_getElfPAD(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 9);
   getElfPAD(myFile, &e); // Pad
   printf("%x", e.e_ident[9]);
   printf("%x", e.e_ident[10]);
@@ -481,7 +474,6 @@ void test_getElfType(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 16);
   getElfType(myFile, &e); // Type
   printf("%x", e.e_type);
 
@@ -498,7 +490,6 @@ void test_getElfMachine(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 18);
   getElfMachine(myFile, &e); // Machine
   printf("%x", e.e_machine);
 
@@ -514,7 +505,6 @@ void test_getElfOriVersion(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 20);
   getElfOriVersion(myFile, &e); // Machine
   printf("%x", e.e_version);
   
@@ -529,7 +519,6 @@ void test_getElfEntryPointAddress(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 24);
   getElfEntryPointAddress(myFile, &e); // Machine
   printf("%x", e.e_entry);
   
@@ -544,7 +533,6 @@ void test_getElfStartOfProgramHeader(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 28);
   getElfStartOfProgramHeader(myFile, &e); // Machine
   printf("%x", e.e_phoff);
   
@@ -559,7 +547,6 @@ void test_getElfStartOfSectionHeader(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 32);
   getElfStartOfSectionHeader(myFile, &e); // Machine
   printf("%x", e.e_shoff);
   
@@ -574,7 +561,6 @@ void test_getElfFlag(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 36);
   getElfFlag(myFile, &e); // Machine
   printf("%x", e.e_flags);
   
@@ -589,7 +575,6 @@ void test_getElfSizeOfHeader(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 40);
   getElfSizeOfHeader(myFile, &e); // Machine
   printf("%x", e.e_ehsize);
   
@@ -604,7 +589,6 @@ void test_getElfProgramHeaderSize(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 42);
   getElfProgramHeaderSize(myFile, &e); // Machine
   printf("%x", e.e_phentsize);
   
@@ -619,7 +603,6 @@ void test_getElfNumberOfProgramHeader(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 44);
   getElfNumberOfProgramHeader(myFile, &e); // Machine
   printf("%x", e.e_phnum);
   
@@ -634,7 +617,6 @@ void test_getElfSectionHeaderSize(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 46);
   getElfSectionHeaderSize(myFile, &e); // Machine
   printf("%x", e.e_shentsize);
   
@@ -649,7 +631,6 @@ void test_getElfNumberOfSectionHeader(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 48);
   getElfNumberOfSectionHeader(myFile, &e); // Machine
   printf("%x", e.e_shnum);
   
@@ -664,7 +645,6 @@ void test_getElfSectionHeaderStringTableIndex(void){
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 50);
   getElfSectionHeaderStringTableIndex(myFile, &e); // Machine
   printf("%x", e.e_shstrndx);
   
