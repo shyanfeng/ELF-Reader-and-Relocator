@@ -482,6 +482,8 @@ typedef struct
 #define PF_R		(1 << 2)	/* Segment is readable */
 #define PF_MASKPROC	0xf0000000	/* Processor-specific */
 
+#define PF_RWE  0x7       /* Segment is executable, writable, readable */
+
 /* Legal values for note segment descriptor types for core files. */
 
 #define NT_PRSTATUS	1		/* Contains copy of prstatus struct */

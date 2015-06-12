@@ -12,14 +12,13 @@ void test_getElfMagic(void){
   InStream *myFile;
   Elf32_Ehdr e;
   int startPosition;
-  int curPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfMagic(myFile, 4, &e); // Magic
-  printf("%x", e.e_ident[0]);
-  printf("%x", e.e_ident[1]);
-  printf("%x", e.e_ident[2]);
-  printf("%x", e.e_ident[3]);
+  // printf("%x", e.e_ident[0]);
+  // printf("%x", e.e_ident[1]);
+  // printf("%x", e.e_ident[2]);
+  // printf("%x", e.e_ident[3]);
   
   TEST_ASSERT_EQUAL_HEX8(ELFMAG0, e.e_ident[EI_MAG0]);
   TEST_ASSERT_EQUAL_HEX8(ELFMAG1, e.e_ident[EI_MAG1]);
@@ -36,7 +35,7 @@ void test_getElfClass(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfClass(myFile, &e); // Class
-  printf("%x", e.e_ident[EI_CLASS]);
+  // printf("%x", e.e_ident[EI_CLASS]);
   
   TEST_ASSERT_EQUAL_HEX8(ELFCLASS32, e.e_ident[EI_CLASS]);
   
@@ -50,7 +49,7 @@ void test_getElfData(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfData(myFile, &e); // Data
-  printf("%x", e.e_ident[EI_DATA]);
+  // printf("%x", e.e_ident[EI_DATA]);
   
   TEST_ASSERT_EQUAL_HEX8(ELFDATA2LSB, e.e_ident[EI_DATA]);
   
@@ -64,7 +63,7 @@ void test_getElfVERSION(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfVERSION(myFile, &e); // Version
-  printf("%x", e.e_ident[EI_VERSION]);
+  // printf("%x", e.e_ident[EI_VERSION]);
   
   TEST_ASSERT_EQUAL_HEX8(EV_CURRENT, e.e_ident[EI_VERSION]);
   
@@ -78,7 +77,7 @@ void test_getElfOSABI(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfOSABI(myFile, &e); // OSABI
-  printf("%x", e.e_ident[EI_OSABI]);
+  // printf("%x", e.e_ident[EI_OSABI]);
   
   TEST_ASSERT_EQUAL_HEX8(ELFOSABI_SYSV, e.e_ident[EI_OSABI]);
 
@@ -92,7 +91,7 @@ void test_getElfABIVersion(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfABIVersion(myFile, &e); // ABIVersion
-  printf("%x", e.e_ident[EI_ABIVERSION]);
+  // printf("%x", e.e_ident[EI_ABIVERSION]);
   
   TEST_ASSERT_EQUAL_HEX8(0, e.e_ident[EI_ABIVERSION]);
 
@@ -106,13 +105,13 @@ void test_getElfPAD(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfPAD(myFile, &e); // Pad
-  printf("%x", e.e_ident[9]);
-  printf("%x", e.e_ident[10]);
-  printf("%x", e.e_ident[11]);
-  printf("%x", e.e_ident[12]);
-  printf("%x", e.e_ident[13]);
-  printf("%x", e.e_ident[14]);
-  printf("%x", e.e_ident[15]);
+  // printf("%x", e.e_ident[9]);
+  // printf("%x", e.e_ident[10]);
+  // printf("%x", e.e_ident[11]);
+  // printf("%x", e.e_ident[12]);
+  // printf("%x", e.e_ident[13]);
+  // printf("%x", e.e_ident[14]);
+  // printf("%x", e.e_ident[15]);
   
   TEST_ASSERT_EQUAL_HEX8(0, e.e_ident[9]);
   TEST_ASSERT_EQUAL_HEX8(0, e.e_ident[10]);
@@ -132,11 +131,9 @@ void test_getElfType(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfType(myFile, &e); // Type
-  printf("%x", e.e_type);
+  // printf("%x", e.e_type);
 
-  
   TEST_ASSERT_EQUAL_HEX16(ET_EXEC, e.e_type);
-
 
   closeFileInTxt(myFile);
 }
@@ -148,8 +145,7 @@ void test_getElfMachine(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfMachine(myFile, &e); // Machine
-  printf("%x", e.e_machine);
-
+  // printf("%x", e.e_machine);
   
   TEST_ASSERT_EQUAL_HEX16(0x0028, e.e_machine);
 
@@ -163,7 +159,7 @@ void test_getElfOriVersion(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfOriVersion(myFile, &e); // Machine
-  printf("%x", e.e_version);
+  // printf("%x", e.e_version);
   
   TEST_ASSERT_EQUAL_HEX32(0x00000001, e.e_version);
 
@@ -177,7 +173,7 @@ void test_getElfEntryPointAddress(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfEntryPointAddress(myFile, &e); // Machine
-  printf("%x", e.e_entry);
+  // printf("%x", e.e_entry);
   
   TEST_ASSERT_EQUAL_HEX32(0x08000fed, e.e_entry);
 
@@ -191,7 +187,7 @@ void test_getElfStartOfProgramHeader(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfStartOfProgramHeader(myFile, &e); // Machine
-  printf("%x", e.e_phoff);
+  // printf("%x", e.e_phoff);
   
   TEST_ASSERT_EQUAL_HEX32(0x00000034, e.e_phoff);
 
@@ -205,7 +201,7 @@ void test_getElfStartOfSectionHeader(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfStartOfSectionHeader(myFile, &e); // Machine
-  printf("%x", e.e_shoff);
+  // printf("%x", e.e_shoff);
   
   TEST_ASSERT_EQUAL_HEX32(0x00013168, e.e_shoff);
 
@@ -219,7 +215,7 @@ void test_getElfFlag(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfFlag(myFile, &e); // Machine
-  printf("%x", e.e_flags);
+  // printf("%x", e.e_flags);
   
   TEST_ASSERT_EQUAL_HEX32(0x05000202, e.e_flags);
 
@@ -233,7 +229,7 @@ void test_getElfSizeOfHeader(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfSizeOfHeader(myFile, &e); // Machine
-  printf("%x", e.e_ehsize);
+  // printf("%x", e.e_ehsize);
   
   TEST_ASSERT_EQUAL_HEX16(0x0034, e.e_ehsize);
 
@@ -247,7 +243,7 @@ void test_getElfProgramHeaderSize(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfProgramHeaderSize(myFile, &e); // Machine
-  printf("%x", e.e_phentsize);
+  // printf("%x", e.e_phentsize);
   
   TEST_ASSERT_EQUAL_HEX16(0x0020, e.e_phentsize);
 
@@ -261,7 +257,7 @@ void test_getElfNumberOfProgramHeader(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfNumberOfProgramHeader(myFile, &e); // Machine
-  printf("%x", e.e_phnum);
+  // printf("%x", e.e_phnum);
   
   TEST_ASSERT_EQUAL_HEX16(0x0003, e.e_phnum);
 
@@ -275,7 +271,7 @@ void test_getElfSectionHeaderSize(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfSectionHeaderSize(myFile, &e); // Machine
-  printf("%x", e.e_shentsize);
+  // printf("%x", e.e_shentsize);
   
   TEST_ASSERT_EQUAL_HEX16(0x0028, e.e_shentsize);
 
@@ -289,7 +285,7 @@ void test_getElfNumberOfSectionHeader(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfNumberOfSectionHeader(myFile, &e); // Machine
-  printf("%x", e.e_shnum);
+  // printf("%x", e.e_shnum);
   
   TEST_ASSERT_EQUAL_HEX16(0x0016, e.e_shnum);
 
@@ -303,7 +299,7 @@ void test_getElfSectionHeaderStringTableIndex(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfSectionHeaderStringTableIndex(myFile, &e); // Machine
-  printf("%x", e.e_shstrndx);
+  // printf("%x", e.e_shstrndx);
   
   TEST_ASSERT_EQUAL_HEX16(0x0013, e.e_shstrndx);
 
