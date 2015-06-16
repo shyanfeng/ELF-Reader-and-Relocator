@@ -7,6 +7,8 @@
 #include "Read_File.h"
 #include "elf.h"
 
+void read_ELF_Program_Header(InStream *getId, Elf32_Phdr **e);
+/*
 // Type of Program Header
 void getProgramHeaderSegmentType(InStream *getId, Elf32_Phdr *e);
 
@@ -29,6 +31,6 @@ void getProgramHeaderSegmentSizeInMemory(InStream *getId, Elf32_Phdr *e);
 void getProgramHeaderSegmentFlag(InStream *getId, Elf32_Phdr *e);
 
 // Segmeng Align
-void getProgramHeaderSegmentAlignment(InStream *getId, Elf32_Phdr *e);
+void getProgramHeaderSegmentAlignment(InStream *getId, Elf32_Phdr *e);*/
 
 #endif // Get_Program_Header_H

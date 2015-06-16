@@ -8,7 +8,7 @@
 #include "elf.h"
 
 // Elf32_Ehdr create_ELF_Header();
-void read_ELF_File_Header(InStream *getId, Elf32_Ehdr *e);
+void read_ELF_File_Header(InStream *getId, Elf32_Ehdr **e);
 
 /*
 // File Identifier

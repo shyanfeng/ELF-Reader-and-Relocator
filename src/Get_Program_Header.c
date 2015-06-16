@@ -4,6 +4,24 @@
 #include <malloc.h>
 #include "CException.h"
 #include "ErrorCode.h"
+
+void read_ELF_Program_Header(InStream *getId, Elf32_Phdr **e){
+  *e = malloc(sizeof(Elf32_Ehdr));
+  
+  int startPosition;
+  startPosition = movCurrent(getId, 52);
+  
+  (*e)->p_type = byteSelection(getId, 4);
+  (*e)->p_offset = byteSelection(getId, 4);
+  (*e)->p_vaddr = byteSelection(getId, 4);
+  (*e)->p_paddr = byteSelection(getId, 4);
+  (*e)->p_filesz = byteSelection(getId, 4);
+  (*e)->p_memsz = byteSelection(getId, 4);
+  (*e)->p_flags = byteSelection(getId, 4);
+  (*e)->p_align = byteSelection(getId, 4);
+  
+}
+
 /*
 void getProgramHeaderSegmentType(InStream *getId, Elf32_Phdr *e){
   int startPosition;
