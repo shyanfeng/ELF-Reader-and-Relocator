@@ -195,6 +195,17 @@ void test_loop_for_program_header_size(void){
   TEST_ASSERT_EQUAL_HEX32(0x00000001, e[15]->sh_addralign);
   TEST_ASSERT_EQUAL_HEX32(0x00000001, e[15]->sh_entsize);
   
+  // TEST_ASSERT_EQUAL_HEX32(0x000000b7, e[16]->sh_name);
+  // TEST_ASSERT_EQUAL_HEX32(SHT_PROGBITS, e[16]->sh_type);
+  // TEST_ASSERT_EQUAL_HEX32(SHT_MERGE_STRING, e[16]->sh_flags);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000000, e[16]->sh_addr);
+  // TEST_ASSERT_EQUAL_HEX32(0x00012613, e[16]->sh_offset);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000693, e[16]->sh_size);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000000, e[16]->sh_link);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000000, e[16]->sh_info);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000001, e[16]->sh_addralign);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000001, e[16]->sh_entsize);
+  
   closeFileInTxt(myFile);
   
 }

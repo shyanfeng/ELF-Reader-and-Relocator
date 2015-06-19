@@ -8,6 +8,12 @@
 
 void loop_for_program_header_size(InStream *getId, Elf32_Phdr **e, Elf32_Ehdr **e2){
   int i;
+  int startPosition;
+  uint32_t positionOfSectionHeader;
+  
+  positionOfSectionHeader = (*e2)->e_phoff;
+  positionOfSectionHeader = positionOfSectionHeader - (*e2)->e_ehsize;
+  
   
   for(i = 0; i < (*e2)->e_phnum; i++){
     read_ELF_Program_Header(getId, e, 0);
