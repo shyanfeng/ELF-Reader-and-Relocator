@@ -283,6 +283,8 @@ typedef struct
 
 #define	SHT_INIT_ARRAY		 14		/* Number of defined types.  */
 #define	SHT_FINI_ARRAY		 15		/* Number of defined types.  */
+#define	SHT_ARM_ATTRIBUTES		 0x70000003		/* Number of defined types.  */
+#define	SHT_MERGE_STRING		 0x30		/* Number of defined types.  */
 
 /* Legal values for sh_flags (section flags).  */
 
@@ -292,7 +294,7 @@ typedef struct
 #define SHF_MASKPROC	0xf0000000	/* Processor-specific */
 
 #define SHF_EXECINSTR_ALLOC	0x6	/* Executable and Alloc*/
-#define SHF_ALLOC_SHF_WRITE	0x3	/* Alloc and Writable */
+#define SHF_ALLOC_WRITE	0x3	/* Alloc and Writable */
 
 /* Symbol table entry.  */
 
