@@ -281,12 +281,18 @@ typedef struct
 #define SHT_LOUSER	 0x80000000	/* Start of application-specific */
 #define SHT_HIUSER	 0x8fffffff	/* End of application-specific */
 
+#define	SHT_INIT_ARRAY		 14		/* Number of defined types.  */
+#define	SHT_FINI_ARRAY		 15		/* Number of defined types.  */
+
 /* Legal values for sh_flags (section flags).  */
 
 #define SHF_WRITE	(1 << 0)	/* Writable */
 #define SHF_ALLOC	(1 << 1)	/* Occupies memory during execution */
 #define SHF_EXECINSTR	(1 << 2)	/* Executable */
 #define SHF_MASKPROC	0xf0000000	/* Processor-specific */
+
+#define SHF_EXECINSTR_ALLOC	0x6	/* Executable and Alloc*/
+#define SHF_ALLOC_SHF_WRITE	0x3	/* Alloc and Writable */
 
 /* Symbol table entry.  */
 
