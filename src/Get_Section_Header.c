@@ -10,7 +10,12 @@
 void loop_for_section_header_size(InStream *getId, Elf32_Shdr **e, Elf32_Ehdr **e2){
   int i;
   int startPosition;
-  startPosition = movCurrent(getId, 78132);
+  uint32_t positionOfSectionHeader;
+  
+  positionOfSectionHeader = (*e2)->e_shoff;
+  positionOfSectionHeader = positionOfSectionHeader - (*e2)->e_ehsize;
+
+  startPosition = movCurrent(getId, positionOfSectionHeader);
 
   for(i = 0; i < (*e2)->e_shnum; i++){
     read_ELF_Section_Header(getId, e, 0);
