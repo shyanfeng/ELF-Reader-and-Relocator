@@ -309,7 +309,7 @@ void test_mov_start_elf_file(void){
   uint32_t getRead;
 
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movStart(myFile, 33216);
+  startPosition = inStreamMoveFilePtr(myFile, 33216);
   getRead = byteSelection(myFile, 4);
   // printf("startPosition : %d, read = %x\n", startPosition, getRead);
   

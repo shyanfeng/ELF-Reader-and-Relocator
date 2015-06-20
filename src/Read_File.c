@@ -103,10 +103,10 @@ uint32_t byteSelection(InStream *getByte, int inputByte){
   return returnBits;
 }
 
-uint32_t movStart(InStream *getFile, long int posStart){
+uint32_t inStreamMoveFilePtr(InStream *getFile, long int offset){
   int startPos;
   
-  startPos = fseek(getFile->file, posStart, SEEK_SET);
+  startPos = fseek(getFile->file, offset, SEEK_SET);
   
   if(startPos == 1){
     Throw(ERR_RANGE_OFFSET);

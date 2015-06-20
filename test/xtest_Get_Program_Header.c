@@ -9,6 +9,23 @@ void setUp(void){}
 
 void tearDown(void){}
 
+void test_try(void){
+  Data *dataPtr;
+  
+  try1(dataPtr);
+}
+
+void test_try2(void){
+  Data *dataPtr;
+  InStream *myFile;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  try2(dataPtr, myFile);
+  
+  closeFileInTxt(myFile);
+}
+
+
 void test_loop_for_program_header_size(void){
   InStream *myFile;
   Elf32_Phdr *e[3];

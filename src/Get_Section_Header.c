@@ -24,19 +24,13 @@ void loop_for_section_header_size(InStream *getId, Elf32_Shdr **e, Elf32_Ehdr **
   
 }
 
+
 void read_ELF_Section_Header(InStream *getId, Elf32_Shdr **e, int i){
   *e = malloc(sizeof(Elf32_Shdr));
   Elf32_Shdr *a = &(*e)[10];
   
-  (*e)[i].sh_name = byteSelection(getId, 4);
-  (*e)[i].sh_type = byteSelection(getId, 4);
-  (*e)[i].sh_flags = byteSelection(getId, 4);
-  (*e)[i].sh_addr = byteSelection(getId, 4);
-  (*e)[i].sh_offset = byteSelection(getId, 4);
-  (*e)[i].sh_size = byteSelection(getId, 4);
-  (*e)[i].sh_link = byteSelection(getId, 4);
-  (*e)[i].sh_info = byteSelection(getId, 4);
-  (*e)[i].sh_addralign = byteSelection(getId, 4);
-  (*e)[i].sh_entsize = byteSelection(getId, 4);
+  fread((*e), sizeof(Elf32_Shdr), 1, getId->file);
 
 }
+
+

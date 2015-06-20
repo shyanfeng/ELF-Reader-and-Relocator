@@ -6,6 +6,32 @@
 #include "CException.h"
 #include "ErrorCode.h"
 
+void try1(Data *dataPtr){
+  short int value;
+  int value2;
+  
+  char buffer[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
+  
+  dataPtr = (Data *)buffer;
+  printf("%x\n", dataPtr);
+
+  printf("second2 = %x\n", dataPtr->second2Byes);
+  printf("first4 = %x\n", dataPtr->first4Bytes);
+  
+}
+
+void try2(Data *dataPtr, InStream *getBit){
+  dataPtr = malloc(sizeof(Data));
+  printf("%x\n", sizeof(Data));
+  short int value;
+  int value2;
+  
+  fread((dataPtr), sizeof(Data), 1, getBit->file);
+
+  printf("data = %x\n", dataPtr->first4Bytes);
+}
+
+
 void loop_for_program_header_size(InStream *getId, Elf32_Phdr **e, Elf32_Ehdr **e2){
   int i;
   int startPosition;
@@ -26,14 +52,7 @@ void read_ELF_Program_Header(InStream *getId, Elf32_Phdr **e, int i){
   *e = malloc(sizeof(Elf32_Phdr));
   Elf32_Phdr *a = &(*e)[8];
   
-  (*e)[i].p_type = byteSelection(getId, 4);
-  (*e)[i].p_offset = byteSelection(getId, 4);
-  (*e)[i].p_vaddr = byteSelection(getId, 4);
-  (*e)[i].p_paddr = byteSelection(getId, 4);
-  (*e)[i].p_filesz = byteSelection(getId, 4);
-  (*e)[i].p_memsz = byteSelection(getId, 4);
-  (*e)[i].p_flags = byteSelection(getId, 4);
-  (*e)[i].p_align = byteSelection(getId, 4);
+  fread((*e), sizeof(Elf32_Phdr), 1, getId->file);
 
 }
 
