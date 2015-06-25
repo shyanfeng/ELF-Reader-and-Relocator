@@ -11,7 +11,7 @@
  *
  *
  ******************************************************/
-void read_ELF_File_Header(InStream *getId, Elf32_Ehdr **e){
+void getElfHeader(InStream *getId, Elf32_Ehdr **e){
   *e = malloc(sizeof(Elf32_Ehdr));
   int i;
   
@@ -26,32 +26,47 @@ void read_ELF_File_Header(InStream *getId, Elf32_Ehdr **e){
  *
  *
  ******************************************************/
-Elf32_Phdr *getProgramHeader(InStream *getId, int index){
-  Elf32_Phdr *e = malloc(sizeof(Elf32_Phdr));
-  uint32_t moveFilePtr;
-  moveFilePtr = index * 32;
-  moveFilePtr = 52 + index;
+/*Elf32_Phdr *getProgramHeaders(InStream *getId, Elf32_Ehdr *e2){
+  Elf32_Phdr *ph, *temp;
+  int i;
   
-  inStreamMoveFilePtr(getId, moveFilePtr);
-  fread(e, sizeof(Elf32_Phdr), 1, getId->file);
+  for(i = 0; i < ((*e2).e_phnum); i++){
+    ph = getProgramHeader(getId, e2, i);
+    if(i == 0){
+      temp = ph;
+    }
+  }
   
+  return temp;
 }
  
-void loop_for_program_header_size(InStream *getId, Elf32_Phdr **e, Elf32_Ehdr **e2){
-  int i;
-  int startPosition;
+Elf32_Phdr *getProgramHeader(InStream *getId, Elf32_Ehdr *e2, int index){
+  Elf32_Phdr *e = malloc(sizeof(Elf32_Phdr));
+  uint32_t moveFilePtr;
+  uint32_t FilePtr;
+  moveFilePtr = index * ((*e2).e_phentsize);//index x 32
+  FilePtr = ((*e2).e_phoff) + moveFilePtr;//52 + index x 32
 
+  inStreamMoveFilePtr(getId, FilePtr);
+  fread(e, sizeof(Elf32_Phdr), 1, getId->file);
   
+  return e;
+  
+}*/
+ 
+void getProgramHeaders(InStream *getId, Elf32_Phdr **e, Elf32_Ehdr **e2){
+  int i;
+
   inStreamMoveFilePtr(getId, (*e2)->e_phoff);
   
   for(i = 0; i < (*e2)->e_phnum; i++){
-    read_ELF_Program_Header(getId, e, 0);
+    getProgramHeader(getId, e, 0);
     e += sizeof(Elf32_Phdr *)/4;
    }
   
 }
 
-void read_ELF_Program_Header(InStream *getId, Elf32_Phdr **e, int i){
+void getProgramHeader(InStream *getId, Elf32_Phdr **e, int i){
   *e = malloc(sizeof(Elf32_Phdr));
   Elf32_Phdr *a = &(*e)[8];
   
@@ -67,25 +82,20 @@ void read_ELF_Program_Header(InStream *getId, Elf32_Phdr **e, int i){
  *
  ******************************************************/
 
-void loop_for_section_header_size(InStream *getId, Elf32_Shdr **e, Elf32_Ehdr **e2){
+void getSectionHeaders(InStream *getId, Elf32_Shdr **e, Elf32_Ehdr **e2){
   int i;
-  int startPosition;
-  uint32_t positionOfSectionHeader;
-  
-  positionOfSectionHeader = (*e2)->e_shoff;
-  positionOfSectionHeader = positionOfSectionHeader - (*e2)->e_ehsize;
 
-  startPosition = movCurrent(getId, positionOfSectionHeader);
+  inStreamMoveFilePtr(getId, (*e2)->e_shoff);
 
   for(i = 0; i < (*e2)->e_shnum; i++){
-    read_ELF_Section_Header(getId, e, 0);
+    getSectionHeader(getId, e, 0);
     e += sizeof(Elf32_Shdr *)/4;
    }
   
 }
 
 
-void read_ELF_Section_Header(InStream *getId, Elf32_Shdr **e, int i){
+void getSectionHeader(InStream *getId, Elf32_Shdr **e, int i){
   *e = malloc(sizeof(Elf32_Shdr));
   Elf32_Shdr *a = &(*e)[10];
   
@@ -93,3 +103,33 @@ void read_ELF_Section_Header(InStream *getId, Elf32_Shdr **e, int i){
 
 }
 
+/******************************************************
+ *
+ *
+ *      Symbol Table
+ *
+ *
+ ******************************************************/
+void getSymbolTables(InStream *getId, Elf32_Sym **e, Elf32_Ehdr **e2){
+  int i;
+  uint32_t positionOfSectionHeader;
+  
+  positionOfSectionHeader = (*e2)->e_shnum * (*e2)->e_shentsize;
+  positionOfSectionHeader = (*e2)->e_shoff + positionOfSectionHeader;
+
+  inStreamMoveFilePtr(getId, positionOfSectionHeader);
+
+  for(i = 0; i < (*e2)->e_shnum; i++){
+    getSymbolTable(getId, e);
+    e += sizeof(Elf32_Sym *)/4;
+   }
+  
+}
+ 
+ void getSymbolTable(InStream *getId, Elf32_Sym **e){
+  *e = malloc(sizeof(Elf32_Sym));
+  Elf32_Sym *a = &(*e)[6];
+  
+  fread((*e), sizeof(Elf32_Sym), 1, getId->file);
+
+}

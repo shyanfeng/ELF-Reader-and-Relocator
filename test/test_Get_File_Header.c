@@ -8,12 +8,12 @@ void setUp(void){}
 
 void tearDown(void){}
 // File Header
-void test_read_ELF_File_Header(void){
+void test_getElfHeader(void){
   InStream *myFile;
   Elf32_Ehdr *e;
 
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  read_ELF_File_Header(myFile, &e);
+  getElfHeader(myFile, &e);
   
   TEST_ASSERT_EQUAL_HEX8(ELFMAG0, e->e_ident[EI_MAG0]);
   TEST_ASSERT_EQUAL_HEX8(ELFMAG1, e->e_ident[EI_MAG1]);
@@ -50,23 +50,103 @@ void test_read_ELF_File_Header(void){
 }
 
 // Program Header
-void test_GetProgramHeader(void){
+/*void test_GetProgramHeaders(void){
   InStream *myFile;
+  Elf32_Ehdr *e2;
   
-  Elf32_Phdr *ph = getProgramHeader(myFile, 0);
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  getElfHeader(myFile, &e2);
+  Elf32_Phdr *ph = getProgramHeaders(myFile, e2);
+  
+  printf("type = %x\n", ph[0].p_type);
+  printf("offset = %x\n", ph[0].p_offset);
+  printf("p_vaddr = %x\n", ph[0].p_vaddr);
+  printf("p_paddr = %x\n", ph[0].p_paddr);
+  printf("p_filesz = %x\n", ph[0].p_filesz);
+  printf("p_memsz = %x\n", ph[0].p_memsz);
+  printf("p_flags = %x\n", ph[0].p_flags);
+  printf("p_align = %x\n", ph[0].p_align);
+  
+  printf("///////////////////////////////////\n");
+  
+  printf("type = %x\n", ph[1].p_type);
+  printf("offset = %x\n", ph[1].p_offset);
+  printf("p_vaddr = %x\n", ph[1].p_vaddr);
+  printf("p_paddr = %x\n", ph[1].p_paddr);
+  printf("p_filesz = %x\n", ph[1].p_filesz);
+  printf("p_memsz = %x\n", ph[1].p_memsz);
+  printf("p_flags = %x\n", ph[1].p_flags);
+  printf("p_align = %x\n", ph[1].p_align);
+  
+  // printf("type = %x\n", ph[2].p_type);
+  // printf("offset = %x\n", ph[2].p_offset);
+  // printf("p_vaddr = %x\n", ph[2].p_vaddr);
+  // printf("p_paddr = %x\n", ph[2].p_paddr);
+  // printf("p_filesz = %x\n", ph[2].p_filesz);
+  // printf("p_memsz = %x\n", ph[2].p_memsz);
+  // printf("p_flags = %x\n", ph[2].p_flags);
+  // printf("p_align = %x\n", ph[2].p_align);
+  
+  // printf("type = %x\n", ph[3].p_type);
+  // printf("offset = %x\n", ph[3].p_offset);
+  // printf("p_vaddr = %x\n", ph[3].p_vaddr);
+  // printf("p_paddr = %x\n", ph[3].p_paddr);
+  // printf("p_filesz = %x\n", ph[3].p_filesz);
+  // printf("p_memsz = %x\n", ph[3].p_memsz);
+  // printf("p_flags = %x\n", ph[3].p_flags);
+  // printf("p_align = %x\n", ph[3].p_align);
   
   
+  
+  // TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[0].p_type);
+  // TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_offset);
+  // TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_vaddr);
+  // TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_paddr);
+  // TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_filesz);
+  // TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_memsz);
+  // TEST_ASSERT_EQUAL_HEX32(PF_RWX, ph[0].p_flags);
+  // TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_align);
+  
+  // TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[1].p_type);
+  // TEST_ASSERT_EQUAL_HEX32(0x00010000, ph[1].p_offset);
+  // TEST_ASSERT_EQUAL_HEX32(0x20000000, ph[1].p_vaddr);
+  // TEST_ASSERT_EQUAL_HEX32(0x0800106c, ph[1].p_paddr);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000440, ph[1].p_filesz);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000440, ph[1].p_memsz);
+  // TEST_ASSERT_EQUAL_HEX32(PF_RW, ph[1].p_flags);
+  // TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[1].p_align);
+  
+  closeFileInTxt(myFile);
 }
 
+void test_GetProgramHeader_index_0(void){
+  InStream *myFile;
+  Elf32_Ehdr *e2;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  getElfHeader(myFile, &e2);
+  Elf32_Phdr *ph = getProgramHeader(myFile, e2, 0);
+  
+  TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[0].p_type);
+  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_vaddr);
+  TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_paddr);
+  TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_filesz);
+  TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_memsz);
+  TEST_ASSERT_EQUAL_HEX32(PF_RWX, ph[0].p_flags);
+  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_align);
+  
+  closeFileInTxt(myFile);
+}*/
 
-void test_loop_for_program_header_size(void){
+void test_getProgramHeaders(void){
   InStream *myFile;
   Elf32_Phdr *e[3];
   Elf32_Ehdr *e2;
 
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  read_ELF_File_Header(myFile, &e2);
-  loop_for_program_header_size(myFile, e, &e2);
+  getElfHeader(myFile, &e2);
+  getProgramHeaders(myFile, e, &e2);
 
   TEST_ASSERT_EQUAL_HEX32(PT_LOAD, e[0]->p_type);
   TEST_ASSERT_EQUAL_HEX32(0x00008000, e[0]->p_offset);
@@ -98,14 +178,14 @@ void test_loop_for_program_header_size(void){
   closeFileInTxt(myFile);
 }
 
-void test_read_ELF_Program_Header(void){
+void test_getProgramHeader(void){
   InStream *myFile;
   Elf32_Phdr *e[3];
   int startPosition;
 
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   startPosition = movCurrent(myFile, 52);
-  read_ELF_Program_Header(myFile, e, 0);
+  getProgramHeader(myFile, e, 0);
   
   TEST_ASSERT_EQUAL_HEX32(PT_LOAD, e[0]->p_type);
   TEST_ASSERT_EQUAL_HEX32(0x00008000, e[0]->p_offset);
@@ -121,14 +201,14 @@ void test_read_ELF_Program_Header(void){
 
 
 // Section Header
-void test_loop_for_section_header_size(void){
+void test_getSectionHeaders(void){
   InStream *myFile;
   Elf32_Shdr *e[22];
   Elf32_Ehdr *e2;
 
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  read_ELF_File_Header(myFile, &e2);
-  loop_for_section_header_size(myFile, e, &e2);
+  getElfHeader(myFile, &e2);
+  getSectionHeaders(myFile, e, &e2);
   
   TEST_ASSERT_EQUAL_HEX32(0x00000000, e[0]->sh_name);
   TEST_ASSERT_EQUAL_HEX32(SHT_NULL, e[0]->sh_type);
@@ -306,29 +386,51 @@ void test_loop_for_section_header_size(void){
   TEST_ASSERT_EQUAL_HEX32(0x00000001, e[15]->sh_addralign);
   TEST_ASSERT_EQUAL_HEX32(0x00000001, e[15]->sh_entsize);
   
-  // TEST_ASSERT_EQUAL_HEX32(0x000000b7, e[16]->sh_name);
-  // TEST_ASSERT_EQUAL_HEX32(SHT_PROGBITS, e[16]->sh_type);
-  // TEST_ASSERT_EQUAL_HEX32(SHT_MERGE_STRING, e[16]->sh_flags);
-  // TEST_ASSERT_EQUAL_HEX32(0x00000000, e[16]->sh_addr);
-  // TEST_ASSERT_EQUAL_HEX32(0x00012613, e[16]->sh_offset);
-  // TEST_ASSERT_EQUAL_HEX32(0x00000693, e[16]->sh_size);
-  // TEST_ASSERT_EQUAL_HEX32(0x00000000, e[16]->sh_link);
-  // TEST_ASSERT_EQUAL_HEX32(0x00000000, e[16]->sh_info);
-  // TEST_ASSERT_EQUAL_HEX32(0x00000001, e[16]->sh_addralign);
-  // TEST_ASSERT_EQUAL_HEX32(0x00000001, e[16]->sh_entsize);
+  TEST_ASSERT_EQUAL_HEX32(0x00000011, e[19]->sh_name);
+  TEST_ASSERT_EQUAL_HEX32(SHT_STRTAB, e[19]->sh_type);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[19]->sh_flags);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[19]->sh_addr);
+  TEST_ASSERT_EQUAL_HEX32(0x00013080, e[19]->sh_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x000000e6, e[19]->sh_size);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[19]->sh_link);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[19]->sh_info);
+  TEST_ASSERT_EQUAL_HEX32(0x00000001, e[19]->sh_addralign);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[19]->sh_entsize);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000001, e[20]->sh_name);
+  TEST_ASSERT_EQUAL_HEX32(SHT_SYMTAB, e[20]->sh_type);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[20]->sh_flags);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[20]->sh_addr);
+  TEST_ASSERT_EQUAL_HEX32(0x000134d8, e[20]->sh_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00001220, e[20]->sh_size);
+  TEST_ASSERT_EQUAL_HEX32(0x00000015, e[20]->sh_link);
+  TEST_ASSERT_EQUAL_HEX32(0x0000008c, e[20]->sh_info);
+  TEST_ASSERT_EQUAL_HEX32(0x00000004, e[20]->sh_addralign);
+  TEST_ASSERT_EQUAL_HEX32(0x00000010, e[20]->sh_entsize);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000009, e[21]->sh_name);
+  TEST_ASSERT_EQUAL_HEX32(SHT_STRTAB, e[21]->sh_type);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[21]->sh_flags);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[21]->sh_addr);
+  TEST_ASSERT_EQUAL_HEX32(0x000146f8, e[21]->sh_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000dd6, e[21]->sh_size);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[21]->sh_link);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[21]->sh_info);
+  TEST_ASSERT_EQUAL_HEX32(0x00000001, e[21]->sh_addralign);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, e[21]->sh_entsize);
   
   closeFileInTxt(myFile);
   
 }
 
-void test_Section_Header(void){
+void test_getSectionHeader(void){
   InStream *myFile;
   Elf32_Shdr *e[22];
   int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   startPosition = movCurrent(myFile, 78184);
-  read_ELF_Section_Header(myFile, e, 0);
+  getSectionHeader(myFile, e, 0);
   
   TEST_ASSERT_EQUAL_HEX32(0x00000000, e[0]->sh_name);
   TEST_ASSERT_EQUAL_HEX32(SHT_NULL, e[0]->sh_type);
@@ -344,3 +446,109 @@ void test_Section_Header(void){
   closeFileInTxt(myFile);
   
 }
+
+// Symbol Table
+void test_getSymbolTables(void){
+  InStream *myFile;
+  Elf32_Sym *st[290];
+  Elf32_Ehdr *e2;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  getElfHeader(myFile, &e2);
+  getSymbolTables(myFile, st, &e2);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_NOTYPE), st[0]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_other);
+  TEST_ASSERT_EQUAL_HEX16(0x0000, st[0]->st_shndx);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[1]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x08000000, st[1]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[1]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_SECTION), st[1]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[1]->st_other);
+  TEST_ASSERT_EQUAL_HEX16(0x0001, st[1]->st_shndx);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[2]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x080001ac, st[2]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[2]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_SECTION), st[2]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[2]->st_other);
+  TEST_ASSERT_EQUAL_HEX16(0x0002, st[2]->st_shndx);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[7]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x10000000, st[7]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[7]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_SECTION), st[7]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[7]->st_other);
+  TEST_ASSERT_EQUAL_HEX16(0x0007, st[7]->st_shndx);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[14]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[14]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[14]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_SECTION), st[14]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[14]->st_other);
+  TEST_ASSERT_EQUAL_HEX16(0x000e, st[14]->st_shndx);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000001, st[19]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[19]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[19]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_FILE), st[19]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[19]->st_other);
+  TEST_ASSERT_EQUAL_HEX16(0xfff1, st[19]->st_shndx);
+  /*
+  TEST_ASSERT_EQUAL_HEX32(0x0000001e, st[26]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x0800103c, st[26]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[26]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_NOTYPE), st[26]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[26]->st_other);
+  TEST_ASSERT_EQUAL_HEX16(0x0002, st[26]->st_shndx);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x0000006c, st[29]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[29]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[29]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_FILE), st[29]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[29]->st_other);
+  TEST_ASSERT_EQUAL_HEX16(0xfff1, st[29]->st_shndx);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000077, st[30]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x08001040, st[30]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[30]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_OBJECT), st[30]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[30]->st_other);
+  TEST_ASSERT_EQUAL_HEX16(0x0002, st[30]->st_shndx);
+  */
+  // TEST_ASSERT_EQUAL_HEX32(0x0001ef00, st[101]->st_name);
+  // TEST_ASSERT_EQUAL_HEX32(0x08000efd, st[101]->st_value);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000014, st[101]->st_size);
+  // TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_FUNC), st[101]->st_info);
+  // TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[101]->st_other);
+  // TEST_ASSERT_EQUAL_HEX16(0x0002, st[101]->st_shndx);
+  
+  closeFileInTxt(myFile);
+  
+}
+
+void test_getSymbolTable(void){
+  InStream *myFile;
+  Elf32_Sym *st[290];
+  int startPosition;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = movCurrent(myFile, 79064);
+  getSymbolTable(myFile, st);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(STB_LOCAL, st[0]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_other);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_shndx);
+  
+  closeFileInTxt(myFile);
+  
+}
+
+

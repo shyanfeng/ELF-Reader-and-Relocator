@@ -396,6 +396,16 @@ typedef struct
 
 #define STN_UNDEF	0		/* End of a chain.  */
 
+/* st_info */
+#define ELF32_ST_VISIBILITY(o) ((o)&0x3)
+
+#define STV_DEFAULT 0
+#define STV_INTERNAL 1
+#define STV_HIDDEN 2
+#define STV_PROTECTED 3
+#define STV_EXPORTED 4
+#define STV_SINGLETON 5
+#define STV_ELIMINATE 6
 
 /* Relocation table entry without addend (in section of type SHT_REL).  */
 
