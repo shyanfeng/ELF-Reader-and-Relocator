@@ -10,11 +10,11 @@
 void getElfHeader(InStream *getId, Elf32_Ehdr **e);
 
 // Program Header
-void getProgramHeaders(InStream *getId, Elf32_Phdr **e, Elf32_Ehdr **e2);
-void getProgramHeader(InStream *getId, Elf32_Phdr **e, int i);
+// void getProgramHeaders(InStream *getId, Elf32_Phdr **e, Elf32_Ehdr **e2);
+// void getProgramHeader(InStream *getId, Elf32_Phdr **e, int i);
 
-// Elf32_Phdr *getProgramHeader(InStream *getId, Elf32_Ehdr *e2, int index);
-// Elf32_Phdr *getProgramHeaders(InStream *getId, Elf32_Ehdr *e2);
+Elf32_Phdr *getProgramHeader(InStream *getId, Elf32_Ehdr *e2, int index);
+Elf32_Phdr *getProgramHeaders(InStream *getId, Elf32_Ehdr *e2);
 
 // Section Header
 void getSectionHeaders(InStream *getId, Elf32_Shdr **e, Elf32_Ehdr **e2);

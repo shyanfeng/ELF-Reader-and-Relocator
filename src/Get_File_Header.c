@@ -26,15 +26,22 @@ void getElfHeader(InStream *getId, Elf32_Ehdr **e){
  *
  *
  ******************************************************/
-/*Elf32_Phdr *getProgramHeaders(InStream *getId, Elf32_Ehdr *e2){
+Elf32_Phdr *getProgramHeaders(InStream *getId, Elf32_Ehdr *e2){
   Elf32_Phdr *ph, *temp;
   int i;
+  long int ptrPosition;
+
+  ptrPosition = posPtr(getId);
   
   for(i = 0; i < ((*e2).e_phnum); i++){
+    printf("ptr position = %d\n", ptrPosition);
     ph = getProgramHeader(getId, e2, i);
+    ptrPosition = posPtr(getId);
     if(i == 0){
       temp = ph;
     }
+    ph += sizeof(Elf32_Phdr)/4;
+    printf("ph = %d\n", ph);
   }
   
   return temp;
@@ -44,6 +51,7 @@ Elf32_Phdr *getProgramHeader(InStream *getId, Elf32_Ehdr *e2, int index){
   Elf32_Phdr *e = malloc(sizeof(Elf32_Phdr));
   uint32_t moveFilePtr;
   uint32_t FilePtr;
+
   moveFilePtr = index * ((*e2).e_phentsize);//index x 32
   FilePtr = ((*e2).e_phoff) + moveFilePtr;//52 + index x 32
 
@@ -52,8 +60,8 @@ Elf32_Phdr *getProgramHeader(InStream *getId, Elf32_Ehdr *e2, int index){
   
   return e;
   
-}*/
- 
+}
+ /*
 void getProgramHeaders(InStream *getId, Elf32_Phdr **e, Elf32_Ehdr **e2){
   int i;
 
@@ -72,7 +80,7 @@ void getProgramHeader(InStream *getId, Elf32_Phdr **e, int i){
   
   fread((*e), sizeof(Elf32_Phdr), 1, getId->file);
 
-}
+}*/
 
 /******************************************************
  *
@@ -119,7 +127,7 @@ void getSymbolTables(InStream *getId, Elf32_Sym **e, Elf32_Ehdr **e2){
 
   inStreamMoveFilePtr(getId, positionOfSectionHeader);
 
-  for(i = 0; i < (*e2)->e_shnum; i++){
+  for(i = 0; i < 290; i++){
     getSymbolTable(getId, e);
     e += sizeof(Elf32_Sym *)/4;
    }

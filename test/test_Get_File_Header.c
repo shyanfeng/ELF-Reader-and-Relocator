@@ -50,9 +50,12 @@ void test_getElfHeader(void){
 }
 
 // Program Header
-/*void test_GetProgramHeaders(void){
+void test_GetProgramHeaders(void){
   InStream *myFile;
   Elf32_Ehdr *e2;
+  long int ptrPosition;
+  
+ 
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfHeader(myFile, &e2);
@@ -77,7 +80,7 @@ void test_getElfHeader(void){
   printf("p_memsz = %x\n", ph[1].p_memsz);
   printf("p_flags = %x\n", ph[1].p_flags);
   printf("p_align = %x\n", ph[1].p_align);
-  
+
   // printf("type = %x\n", ph[2].p_type);
   // printf("offset = %x\n", ph[2].p_offset);
   // printf("p_vaddr = %x\n", ph[2].p_vaddr);
@@ -97,16 +100,18 @@ void test_getElfHeader(void){
   // printf("p_align = %x\n", ph[3].p_align);
   
   
-  
-  // TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[0].p_type);
-  // TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_offset);
-  // TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_vaddr);
-  // TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_paddr);
-  // TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_filesz);
-  // TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_memsz);
-  // TEST_ASSERT_EQUAL_HEX32(PF_RWX, ph[0].p_flags);
-  // TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_align);
-  
+  // ptrPosition = posPtr(myFile);
+  // printf("ptr position1 = %d\n", ptrPosition);
+  TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[0].p_type);
+  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_vaddr);
+  TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_paddr);
+  TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_filesz);
+  TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_memsz);
+  TEST_ASSERT_EQUAL_HEX32(PF_RWX, ph[0].p_flags);
+  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_align);
+  // ptrPosition = posPtr(myFile);
+  // printf("ptr position1 = %d\n", ptrPosition);
   // TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[1].p_type);
   // TEST_ASSERT_EQUAL_HEX32(0x00010000, ph[1].p_offset);
   // TEST_ASSERT_EQUAL_HEX32(0x20000000, ph[1].p_vaddr);
@@ -122,24 +127,49 @@ void test_getElfHeader(void){
 void test_GetProgramHeader_index_0(void){
   InStream *myFile;
   Elf32_Ehdr *e2;
+  Elf32_Phdr *ph0;
+  Elf32_Phdr *ph1;
+  Elf32_Phdr *ph2;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfHeader(myFile, &e2);
-  Elf32_Phdr *ph = getProgramHeader(myFile, e2, 0);
+  ph0 = getProgramHeader(myFile, e2, 0);
   
-  TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[0].p_type);
-  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_vaddr);
-  TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_paddr);
-  TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_filesz);
-  TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_memsz);
-  TEST_ASSERT_EQUAL_HEX32(PF_RWX, ph[0].p_flags);
-  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_align);
+  TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph0->p_type);
+  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph0->p_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x08000000, ph0->p_vaddr);
+  TEST_ASSERT_EQUAL_HEX32(0x08000000, ph0->p_paddr);
+  TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph0->p_filesz);
+  TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph0->p_memsz);
+  TEST_ASSERT_EQUAL_HEX32(PF_RWX, ph0->p_flags);
+  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph0->p_align);
+  
+  ph1 = getProgramHeader(myFile, e2, 1);
+  
+  TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph1->p_type);
+  TEST_ASSERT_EQUAL_HEX32(0x00010000, ph1->p_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x20000000, ph1->p_vaddr);
+  TEST_ASSERT_EQUAL_HEX32(0x0800106c, ph1->p_paddr);
+  TEST_ASSERT_EQUAL_HEX32(0x00000440, ph1->p_filesz);
+  TEST_ASSERT_EQUAL_HEX32(0x00000440, ph1->p_memsz);
+  TEST_ASSERT_EQUAL_HEX32(PF_RW, ph1->p_flags);
+  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph1->p_align);
+  
+  ph2 = getProgramHeader(myFile, e2, 2);
+  
+  TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph2->p_type);
+  TEST_ASSERT_EQUAL_HEX32(0x00010440, ph2->p_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x20000440, ph2->p_vaddr);
+  TEST_ASSERT_EQUAL_HEX32(0x20000440, ph2->p_paddr);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, ph2->p_filesz);
+  TEST_ASSERT_EQUAL_HEX32(0x00000648, ph2->p_memsz);
+  TEST_ASSERT_EQUAL_HEX32(PF_RW, ph2->p_flags);
+  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph2->p_align);
   
   closeFileInTxt(myFile);
-}*/
+}
 
-void test_getProgramHeaders(void){
+/*void test_getProgramHeaders(void){
   InStream *myFile;
   Elf32_Phdr *e[3];
   Elf32_Ehdr *e2;
@@ -199,7 +229,7 @@ void test_getProgramHeader(void){
   closeFileInTxt(myFile);
 }
 
-
+*/
 // Section Header
 void test_getSectionHeaders(void){
   InStream *myFile;
@@ -498,7 +528,7 @@ void test_getSymbolTables(void){
   TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_FILE), st[19]->st_info);
   TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[19]->st_other);
   TEST_ASSERT_EQUAL_HEX16(0xfff1, st[19]->st_shndx);
-  /*
+  
   TEST_ASSERT_EQUAL_HEX32(0x0000001e, st[26]->st_name);
   TEST_ASSERT_EQUAL_HEX32(0x0800103c, st[26]->st_value);
   TEST_ASSERT_EQUAL_HEX32(0x00000000, st[26]->st_size);
@@ -519,13 +549,13 @@ void test_getSymbolTables(void){
   TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_OBJECT), st[30]->st_info);
   TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[30]->st_other);
   TEST_ASSERT_EQUAL_HEX16(0x0002, st[30]->st_shndx);
-  */
-  // TEST_ASSERT_EQUAL_HEX32(0x0001ef00, st[101]->st_name);
-  // TEST_ASSERT_EQUAL_HEX32(0x08000efd, st[101]->st_value);
-  // TEST_ASSERT_EQUAL_HEX32(0x00000014, st[101]->st_size);
-  // TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_FUNC), st[101]->st_info);
-  // TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[101]->st_other);
-  // TEST_ASSERT_EQUAL_HEX16(0x0002, st[101]->st_shndx);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x000001ef, st[101]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x08000efd, st[101]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000014, st[101]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_FUNC), st[101]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_VISIBILITY(STV_DEFAULT), st[101]->st_other);
+  TEST_ASSERT_EQUAL_HEX16(0x0002, st[101]->st_shndx);
   
   closeFileInTxt(myFile);
   
@@ -534,18 +564,19 @@ void test_getSymbolTables(void){
 void test_getSymbolTable(void){
   InStream *myFile;
   Elf32_Sym *st[290];
-  int startPosition;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = movCurrent(myFile, 79064);
-  getSymbolTable(myFile, st);
+  inStreamMoveFilePtr(myFile, 0x13b28);
+  getSymbolTable(myFile, &st[101]);
   
-  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_name);
-  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_value);
-  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_size);
-  TEST_ASSERT_EQUAL_HEX32(STB_LOCAL, st[0]->st_info);
-  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_other);
-  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[0]->st_shndx);
+  TEST_ASSERT_EQUAL_HEX32(0x000001ef, st[101]->st_name);
+  TEST_ASSERT_EQUAL_HEX32(0x08000efd, st[101]->st_value);
+  TEST_ASSERT_EQUAL_HEX32(0x00000014, st[101]->st_size);
+  TEST_ASSERT_EQUAL_HEX32(ELF32_ST_INFO(STB_LOCAL, STT_FUNC), st[101]->st_info);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, st[101]->st_other);
+  TEST_ASSERT_EQUAL_HEX32(0x00000002, st[101]->st_shndx);
+  
+  
   
   closeFileInTxt(myFile);
   
