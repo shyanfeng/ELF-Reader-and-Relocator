@@ -23,5 +23,8 @@ void getSectionHeader(InStream *getId, Elf32_Shdr **e, int i);
 // Symbol Table
 void getSymbolTables(InStream *getId, Elf32_Sym **e, Elf32_Ehdr **e2);
  void getSymbolTable(InStream *getId, Elf32_Sym **e);
+ 
+ // Helper
+ void printProgramHeader(Elf32_Phdr *ph);
 
 #endif // Get_File_Header_H

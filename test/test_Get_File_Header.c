@@ -59,27 +59,29 @@ void test_GetProgramHeaders(void){
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   getElfHeader(myFile, &e2);
+  
+  
   Elf32_Phdr *ph = getProgramHeaders(myFile, e2);
   
-  printf("type = %x\n", ph[0].p_type);
-  printf("offset = %x\n", ph[0].p_offset);
-  printf("p_vaddr = %x\n", ph[0].p_vaddr);
-  printf("p_paddr = %x\n", ph[0].p_paddr);
-  printf("p_filesz = %x\n", ph[0].p_filesz);
-  printf("p_memsz = %x\n", ph[0].p_memsz);
-  printf("p_flags = %x\n", ph[0].p_flags);
-  printf("p_align = %x\n", ph[0].p_align);
+  // printf("type = %x\n", ph[0].p_type);
+  // printf("offset = %x\n", ph[0].p_offset);
+  // printf("p_vaddr = %x\n", ph[0].p_vaddr);
+  // printf("p_paddr = %x\n", ph[0].p_paddr);
+  // printf("p_filesz = %x\n", ph[0].p_filesz);
+  // printf("p_memsz = %x\n", ph[0].p_memsz);
+  // printf("p_flags = %x\n", ph[0].p_flags);
+  // printf("p_align = %x\n", ph[0].p_align);
   
-  printf("///////////////////////////////////\n");
+  // printf("///////////////////////////////////\n");
   
-  printf("type = %x\n", ph[1].p_type);
-  printf("offset = %x\n", ph[1].p_offset);
-  printf("p_vaddr = %x\n", ph[1].p_vaddr);
-  printf("p_paddr = %x\n", ph[1].p_paddr);
-  printf("p_filesz = %x\n", ph[1].p_filesz);
-  printf("p_memsz = %x\n", ph[1].p_memsz);
-  printf("p_flags = %x\n", ph[1].p_flags);
-  printf("p_align = %x\n", ph[1].p_align);
+  // printf("type = %x\n", ph[1].p_type);
+  // printf("offset = %x\n", ph[1].p_offset);
+  // printf("p_vaddr = %x\n", ph[1].p_vaddr);
+  // printf("p_paddr = %x\n", ph[1].p_paddr);
+  // printf("p_filesz = %x\n", ph[1].p_filesz);
+  // printf("p_memsz = %x\n", ph[1].p_memsz);
+  // printf("p_flags = %x\n", ph[1].p_flags);
+  // printf("p_align = %x\n", ph[1].p_align);
 
   // printf("type = %x\n", ph[2].p_type);
   // printf("offset = %x\n", ph[2].p_offset);
@@ -99,9 +101,7 @@ void test_GetProgramHeaders(void){
   // printf("p_flags = %x\n", ph[3].p_flags);
   // printf("p_align = %x\n", ph[3].p_align);
   
-  
-  // ptrPosition = posPtr(myFile);
-  // printf("ptr position1 = %d\n", ptrPosition);
+
   TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[0].p_type);
   TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_offset);
   TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_vaddr);
@@ -110,9 +110,8 @@ void test_GetProgramHeaders(void){
   TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_memsz);
   TEST_ASSERT_EQUAL_HEX32(PF_RWX, ph[0].p_flags);
   TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_align);
-  // ptrPosition = posPtr(myFile);
-  // printf("ptr position1 = %d\n", ptrPosition);
-  // TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[1].p_type);
+
+  TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[1].p_type);
   // TEST_ASSERT_EQUAL_HEX32(0x00010000, ph[1].p_offset);
   // TEST_ASSERT_EQUAL_HEX32(0x20000000, ph[1].p_vaddr);
   // TEST_ASSERT_EQUAL_HEX32(0x0800106c, ph[1].p_paddr);
@@ -165,6 +164,32 @@ void test_GetProgramHeader_index_0(void){
   TEST_ASSERT_EQUAL_HEX32(0x00000648, ph2->p_memsz);
   TEST_ASSERT_EQUAL_HEX32(PF_RW, ph2->p_flags);
   TEST_ASSERT_EQUAL_HEX32(0x00008000, ph2->p_align);
+  
+  closeFileInTxt(myFile);
+}
+
+
+void test_GetProgramHeader_using_for_loop(void){
+  InStream *myFile;
+  Elf32_Ehdr *e2;
+  Elf32_Phdr *ph[3];
+  Elf32_Phdr *ph0;
+  Elf32_Phdr *ph1;
+  Elf32_Phdr *ph2;
+  int i;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  getElfHeader(myFile, &e2);
+  // printf("////////////////////////////\n");
+  for(i = 0; i < ((*e2).e_phnum); i++){
+    ph[i] = getProgramHeader(myFile, e2, i);
+    if(i == 0){
+    ph0 = ph[i];
+    }
+    // printProgramHeader(ph[i]);
+  }
+  
+
   
   closeFileInTxt(myFile);
 }
