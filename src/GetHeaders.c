@@ -1,4 +1,4 @@
-#include "Get_File_Header.h"
+#include "GetHeaders.h"
 #include "Read_File.h"
 #include <stdio.h>
 #include <malloc.h>
