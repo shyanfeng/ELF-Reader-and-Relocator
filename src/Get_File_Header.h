@@ -7,24 +7,16 @@
 #include "Read_File.h"
 #include "elf.h"
 // File Header
-void getElfHeader(InStream *getId, Elf32_Ehdr **e);
+Elf32_Ehdr *getElfHeader(InStream *getId);
 
 // Program Header
-// void getProgramHeaders(InStream *getId, Elf32_Phdr **e, Elf32_Ehdr **e2);
-// void getProgramHeader(InStream *getId, Elf32_Phdr **e, int i);
-
-Elf32_Phdr *getProgramHeader(InStream *getId, Elf32_Ehdr *e2, int index);
-Elf32_Phdr *getProgramHeaders(InStream *getId, Elf32_Ehdr *e2);
+Elf32_Phdr *getProgramHeaders(InStream *getId, Elf32_Ehdr *eh);
 
 // Section Header
-void getSectionHeaders(InStream *getId, Elf32_Shdr **e, Elf32_Ehdr **e2);
-void getSectionHeader(InStream *getId, Elf32_Shdr **e, int i);
+Elf32_Shdr *getSectionHeaders(InStream *getId, Elf32_Ehdr *eh);
 
 // Symbol Table
 void getSymbolTables(InStream *getId, Elf32_Sym **e, Elf32_Ehdr **e2);
- void getSymbolTable(InStream *getId, Elf32_Sym **e);
- 
- // Helper
- void printProgramHeader(Elf32_Phdr *ph);
+void getSymbolTable(InStream *getId, Elf32_Sym **e);
 
 #endif // Get_File_Header_H
