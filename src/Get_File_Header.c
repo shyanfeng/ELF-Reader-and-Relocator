@@ -60,26 +60,19 @@ Elf32_Shdr *getSectionHeaders(InStream *myFile, Elf32_Ehdr *eh){
  *
  *
  ******************************************************/
-/*void getSymbolTables(InStream *myFile, Elf32_Sym **e, Elf32_Ehdr **e2){
-  int i;
-  uint32_t positionOfSectionHeader;
+Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
+  int i, totalSymTabByte, entriesOfSymTab;
+  int stSizeToMalloc;
   
-  positionOfSectionHeader = (*e2)->e_shnum * (*e2)->e_shentsize;
-  positionOfSectionHeader = (*e2)->e_shoff + positionOfSectionHeader;
-
-  inStreamMoveFilePtr(myFile, positionOfSectionHeader);
-
-  for(i = 0; i < 290; i++){
-    getSymbolTable(myFile, e);
-    e += sizeof(Elf32_Sym *)/4;
-   }
+  for(i = 0; sh[i].sh_type != SHT_SYMTAB; i++);
+  totalSymTabByte = sh[i+1].sh_offset - sh[i].sh_offset;
+  entriesOfSymTab = totalSymTabByte / sizeof(Elf32_Sym);
+  
+  Elf32_Sym *st = malloc(totalSymTabByte);
+  
+  inStreamMoveFilePtr(myFile, sh[i].sh_offset);
+  fread(st, totalSymTabByte, 1, myFile->file);
+  
+  return st;
   
 }
- 
-void getSymbolTable(InStream *myFile, Elf32_Sym **e){
-  *e = malloc(sizeof(Elf32_Sym));
-  Elf32_Sym *a = &(*e)[6];
-  
-  fread((*e), sizeof(Elf32_Sym), 1, myFile->file);
-
-}*/
