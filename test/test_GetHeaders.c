@@ -311,4 +311,29 @@ void test_getSymbolTables(void){
   closeFileInTxt(myFile);
 }
 
+void test_printSectionHeaderStringTables(void){
+  InStream *myFile;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  
+  printSectionHeaderStringTables(myFile, eh, sh);
+  
+  closeFileInTxt(myFile);
+}
+
+void test_printStringTables(void){
+  InStream *myFile;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  Elf32_Sym *st = getSymbolTables(myFile, eh, sh);
+  
+  printStringTables(myFile, eh, sh, st);
+  
+  closeFileInTxt(myFile);
+}
+
 

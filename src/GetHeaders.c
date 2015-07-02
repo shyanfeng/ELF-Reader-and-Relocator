@@ -66,8 +66,6 @@ Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
   
   for(i = 0; sh[i].sh_type != SHT_SYMTAB; i++);
   totalSymTabByte = sh[i+1].sh_offset - sh[i].sh_offset;
-  entriesOfSymTab = totalSymTabByte / sizeof(Elf32_Sym);
-  
   Elf32_Sym *st = malloc(totalSymTabByte);
   
   inStreamMoveFilePtr(myFile, sh[i].sh_offset);
@@ -76,3 +74,39 @@ Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
   return st;
   
 }
+
+void printSectionHeaderStringTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
+  char *SectNames;
+  int i, j;
+  
+  for(i = 0; sh[i].sh_type != SHT_STRTAB; i++);
+  SectNames = malloc(sh[i].sh_size);
+  
+  for(j = 0; j < eh->e_shnum; j++){
+    inStreamMoveFilePtr(myFile, sh[i].sh_offset + sh[j].sh_name);
+    fread(SectNames, sh[i].sh_size, 1, myFile->file);
+    printf("%s\n", SectNames);
+  }
+  
+}
+
+void printStringTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh, Elf32_Sym *st){
+  char *SectNames;
+  int i, j;
+  
+  for(i = 0; i < eh->e_shnum - 1; i++);
+  SectNames = malloc(sh[i].sh_size);
+
+  for(j = 0; j < 100; j++){
+    inStreamMoveFilePtr(myFile, sh[i].sh_offset + st[j].st_name);
+    fread(SectNames, sh[i].sh_size, 1, myFile->file);
+    printf("%s\n", SectNames);
+  }
+  
+}
+
+
+
+
+
+
