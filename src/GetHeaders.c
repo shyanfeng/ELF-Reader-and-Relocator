@@ -97,9 +97,9 @@ _Elf32_Shdr *getELFSectionHeaderInfoSection(InStream *myFile, Elf32_Shdr *sh, El
   //section
   SectNames = malloc(sh[index].sh_size);
   inStreamMoveFilePtr(myFile, sh[index].sh_offset);
-  fread(SectNames, sizeof(sh[index].sh_size), 1, myFile->file);
+  fread(SectNames, sh[index].sh_size, 1, myFile->file);
   getShInfo->section = SectNames;
-  // printf("%s\n", getShInfo->section);
+  printf("%s\n", getShInfo->section);
   
   return getShInfo;
 }
