@@ -1,5 +1,7 @@
+#include "ProgramElf.h"
 #include "GetHeaders.h"
 #include "Read_File.h"
+#include "elf.h"
 #include <stdio.h>
 #include <malloc.h>
 #include "CException.h"
@@ -53,6 +55,55 @@ Elf32_Shdr *getSectionHeaders(InStream *myFile, Elf32_Ehdr *eh){
   return sh;
 }
 
+_Elf32_Shdr *getELFSectionHeader(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
+  _Elf32_Shdr *getSh = malloc(sizeof(Elf32_Shdr));
+  int i;
+  sh = getSectionHeaders(myFile, eh);
+  
+  getSh = (_Elf32_Shdr*)&sh[index];
+  getSh->name = NULL;
+  getSh->section = NULL;
+  
+  return getSh;
+}
+
+
+/****************************************
+ *
+ *  getELFSectionHeaderInfoName
+ *
+ ***************************************/
+_Elf32_Shdr *getELFSectionHeaderInfoName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
+  char *names;
+  int i;
+  _Elf32_Shdr *getShInfo;
+  
+  //names
+  for(i = 0; sh[i].sh_type != SHT_STRTAB; i++);
+  names= malloc(sh[i].sh_size);
+  
+  inStreamMoveFilePtr(myFile, sh[i].sh_offset + sh[index].sh_name);
+  fread(names, sh[i].sh_size, 1, myFile->file);
+  getShInfo->name = names;
+  // printf("%s\n", getShInfo->name);
+  
+  return getShInfo;
+}
+
+_Elf32_Shdr *getELFSectionHeaderInfoSection(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
+  char *SectNames;
+  _Elf32_Shdr *getShInfo;
+
+  //section
+  SectNames = malloc(sh[index].sh_size);
+  inStreamMoveFilePtr(myFile, sh[index].sh_offset);
+  fread(SectNames, sizeof(sh[index].sh_size), 1, myFile->file);
+  getShInfo->section = SectNames;
+  // printf("%s\n", getShInfo->section);
+  
+  return getShInfo;
+}
+
 /******************************************************
  *
  *
@@ -75,6 +126,9 @@ Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
   
 }
 
+
+
+/*
 void printSectionHeaderStringTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
   char *SectNames;
   int i, j;
@@ -88,8 +142,8 @@ void printSectionHeaderStringTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr
     printf("%s\n", SectNames);
   }
   
-}
-
+}*/
+/*
 void printStringTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh, Elf32_Sym *st){
   char *SectNames;
   int i, j;
@@ -97,13 +151,13 @@ void printStringTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh, Elf32_S
   for(i = 0; i < eh->e_shnum - 1; i++);
   SectNames = malloc(sh[i].sh_size);
 
-  for(j = 0; j < 100; j++){
+  for(j = 0; j < 290; j++){
     inStreamMoveFilePtr(myFile, sh[i].sh_offset + st[j].st_name);
     fread(SectNames, sh[i].sh_size, 1, myFile->file);
     printf("%s\n", SectNames);
   }
   
-}
+}*/
 
 
 

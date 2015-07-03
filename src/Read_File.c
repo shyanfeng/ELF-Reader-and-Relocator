@@ -147,7 +147,7 @@ uint32_t posPtr(InStream *getFile){
   long int ptrPosition;
   
   ptrPosition = ftell(getFile->file);
-  printf("%d\n", ptrPosition);
+  printf("%x\n", ptrPosition);
   return ptrPosition;
 
 }
