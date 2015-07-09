@@ -76,7 +76,7 @@ _Elf32_Shdr *getELFSectionHeader(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *e
 _Elf32_Shdr *getELFSectionHeaderInfoName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
   char *names;
   int i;
-  _Elf32_Shdr *getShInfo;
+  _Elf32_Shdr *getShInfo = malloc(sizeof(_Elf32_Shdr));
   
   //names
   for(i = 0; sh[i].sh_type != SHT_STRTAB; i++);
@@ -85,23 +85,45 @@ _Elf32_Shdr *getELFSectionHeaderInfoName(InStream *myFile, Elf32_Shdr *sh, Elf32
   inStreamMoveFilePtr(myFile, sh[i].sh_offset + sh[index].sh_name);
   fread(names, sh[i].sh_size, 1, myFile->file);
   getShInfo->name = names;
-  // printf("%s\n", getShInfo->name);
   
   return getShInfo;
 }
 
 _Elf32_Shdr *getELFSectionHeaderInfoSection(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
   char *SectNames;
-  _Elf32_Shdr *getShInfo;
+  int i;
+  uint32_t getRead;
+  _Elf32_Shdr *getShInfoSection = malloc(sizeof(_Elf32_Shdr));
 
   //section
   SectNames = malloc(sh[index].sh_size);
   inStreamMoveFilePtr(myFile, sh[index].sh_offset);
-  fread(SectNames, sh[index].sh_size, 1, myFile->file);
-  getShInfo->section = SectNames;
-  printf("%s\n", getShInfo->section);
   
-  return getShInfo;
+  // fread(SectNames, sh[index].sh_size, 1, myFile->file);
+  // getShInfoSection->section = SectNames;
+  // printf("%s\n", SectNames);
+  
+  for(i = 0; i < (sh[index].sh_size)/4; i++){
+    getRead = readBits(myFile, 32);
+    // printf("%x\n", getRead);
+  }
+  getShInfoSection->section = (char *)getRead;
+  printf("%x\n", getShInfoSection->section);
+  return getShInfoSection;
+}
+/******************************************
+ *
+ *    Combined
+ *
+ ******************************************/
+_Elf32_Shdr *getELFSectionHeaderCombine(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
+  _Elf32_Shdr *getSh = getELFSectionHeader(myFile, sh, eh, index);
+  _Elf32_Shdr *getShInfo = getELFSectionHeaderInfoName(myFile, sh, eh, index);
+  
+  getSh->name = getShInfo->name;
+  // getSh->section = getShInfo->section;
+  
+  return getSh;
 }
 
 /******************************************************

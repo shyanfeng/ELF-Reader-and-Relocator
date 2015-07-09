@@ -402,11 +402,25 @@ void test_getELFSectionHeaderInfoSection_with_index_5(void){
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   Elf32_Ehdr *eh = getElfHeader(myFile);
   Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  _Elf32_Shdr *getSh = (_Elf32_Shdr*)getELFSectionHeaderInfoSection(myFile, sh, eh, 2);
+  _Elf32_Shdr *getSh = (_Elf32_Shdr*)getELFSectionHeaderInfoSection(myFile, sh, eh, 1);
   
+  TEST_ASSERT_EQUAL(0x800103d, getSh->section);
   
   closeFileInTxt(myFile);
 }
 
-
-
+void test_getELFSectionHeaderCombine_with_index_5(void){
+  InStream *myFile;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  _Elf32_Shdr *getSh = (_Elf32_Shdr*)getELFSectionHeaderCombine(myFile, sh, eh, 5);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000041, getSh->sh_name);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, getSh->sh_entsize);
+  TEST_ASSERT_EQUAL_STRING(".fini_array", getSh->name);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000000, getSh->section);
+  
+  closeFileInTxt(myFile);
+}
