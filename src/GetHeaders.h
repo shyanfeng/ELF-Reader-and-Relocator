@@ -22,15 +22,13 @@ Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh);
 
 /****************************************
  *
- *  getELFSectionHeaderCombine
+ *  getSectionInfoUsingIndex
  *
  ****************************************/
-_Elf32_Shdr *getELFSectionHeader(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index);
+_Elf32_Shdr *getSectionInfoUsingIndex(InStream *myFile, Elf32_Shdr *sh, int index);
 
-_Elf32_Shdr *getELFSectionHeaderCombine(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index);
+_Elf32_Shdr *getSectionInfoName(InStream *myFile, Elf32_Shdr *sh, int index);
 
-_Elf32_Shdr *getELFSectionHeaderInfoName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index);
-_Elf32_Shdr *getELFSectionHeaderInfoSection(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index);
 #endif // Get_File_Header_H
 
 // void printSectionHeaderStringTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh);

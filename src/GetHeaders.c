@@ -55,77 +55,6 @@ Elf32_Shdr *getSectionHeaders(InStream *myFile, Elf32_Ehdr *eh){
   return sh;
 }
 
-_Elf32_Shdr *getELFSectionHeader(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
-  _Elf32_Shdr *getSh = malloc(sizeof(Elf32_Shdr));
-  int i;
-  sh = getSectionHeaders(myFile, eh);
-  
-  getSh = (_Elf32_Shdr*)&sh[index];
-  getSh->name = NULL;
-  getSh->section = NULL;
-  
-  return getSh;
-}
-
-
-/****************************************
- *
- *  getELFSectionHeaderInfoName
- *
- ***************************************/
-_Elf32_Shdr *getELFSectionHeaderInfoName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
-  char *names;
-  int i;
-  _Elf32_Shdr *getShInfo = malloc(sizeof(_Elf32_Shdr));
-  
-  //names
-  for(i = 0; sh[i].sh_type != SHT_STRTAB; i++);
-  names= malloc(sh[i].sh_size);
-  
-  inStreamMoveFilePtr(myFile, sh[i].sh_offset + sh[index].sh_name);
-  fread(names, sh[i].sh_size, 1, myFile->file);
-  getShInfo->name = names;
-  
-  return getShInfo;
-}
-
-_Elf32_Shdr *getELFSectionHeaderInfoSection(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
-  char *SectNames;
-  int i;
-  uint32_t getRead;
-  _Elf32_Shdr *getShInfoSection = malloc(sizeof(_Elf32_Shdr));
-
-  //section
-  SectNames = malloc(sh[index].sh_size);
-  inStreamMoveFilePtr(myFile, sh[index].sh_offset);
-  
-  // fread(SectNames, sh[index].sh_size, 1, myFile->file);
-  // getShInfoSection->section = SectNames;
-  // printf("%s\n", SectNames);
-  
-  for(i = 0; i < (sh[index].sh_size)/4; i++){
-    getRead = readBits(myFile, 32);
-    // printf("%x\n", getRead);
-  }
-  getShInfoSection->section = (char *)getRead;
-  printf("%x\n", getShInfoSection->section);
-  return getShInfoSection;
-}
-/******************************************
- *
- *    Combined
- *
- ******************************************/
-_Elf32_Shdr *getELFSectionHeaderCombine(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
-  _Elf32_Shdr *getSh = getELFSectionHeader(myFile, sh, eh, index);
-  _Elf32_Shdr *getShInfo = getELFSectionHeaderInfoName(myFile, sh, eh, index);
-  
-  getSh->name = getShInfo->name;
-  // getSh->section = getShInfo->section;
-  
-  return getSh;
-}
-
 /******************************************************
  *
  *
@@ -148,38 +77,51 @@ Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
   
 }
 
-
-
-/*
-void printSectionHeaderStringTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
-  char *SectNames;
-  int i, j;
+/********************************************************
+ *
+ *  Read the section name
+ *
+ *******************************************************/
+_Elf32_Shdr *getSectionInfoName(InStream *myFile, Elf32_Shdr *sh, int index){
+  char *names;
+  int i;
+  _Elf32_Shdr *getShInfo = malloc(sizeof(_Elf32_Shdr));
   
   for(i = 0; sh[i].sh_type != SHT_STRTAB; i++);
-  SectNames = malloc(sh[i].sh_size);
+  names= malloc(sh[i].sh_size);
   
-  for(j = 0; j < eh->e_shnum; j++){
-    inStreamMoveFilePtr(myFile, sh[i].sh_offset + sh[j].sh_name);
-    fread(SectNames, sh[i].sh_size, 1, myFile->file);
-    printf("%s\n", SectNames);
-  }
+  inStreamMoveFilePtr(myFile, sh[i].sh_offset + sh[index].sh_name);
+  fread(names, sh[i].sh_size, 1, myFile->file);
+  getShInfo->name = names;
   
-}*/
-/*
-void printStringTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh, Elf32_Sym *st){
-  char *SectNames;
-  int i, j;
-  
-  for(i = 0; i < eh->e_shnum - 1; i++);
-  SectNames = malloc(sh[i].sh_size);
+  return getShInfo;
+}
 
-  for(j = 0; j < 290; j++){
-    inStreamMoveFilePtr(myFile, sh[i].sh_offset + st[j].st_name);
-    fread(SectNames, sh[i].sh_size, 1, myFile->file);
-    printf("%s\n", SectNames);
-  }
+/********************************************************
+ *
+ *  Read the section from the offset and size with index 
+ *  and name from getSectionInfoName()
+ *
+ *******************************************************/
+_Elf32_Shdr *getSectionInfoUsingIndex(InStream *myFile, Elf32_Shdr *sh, int index){
+  _Elf32_Shdr *getShInfo, *getShInfoName;
+  uint8_t *sect = malloc(sh[index].sh_size);
   
-}*/
+  inStreamMoveFilePtr(myFile, sh[index].sh_offset);
+  fread(sect, sh[index].sh_size, 1, myFile->file);
+  getShInfo->section = (char *)&sh[index].sh_offset;
+  
+  getShInfoName = getSectionInfoName(myFile, sh, index);
+  getShInfo->name = getShInfoName->name;
+  
+  return getShInfo;
+}
+
+
+
+
+
+
 
 
 
