@@ -19,15 +19,10 @@ Elf32_Shdr *getSectionHeaders(InStream *getId, Elf32_Ehdr *eh);
 // Symbol Table
 Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh);
 
-
-/****************************************
- *
- *  getSectionInfoUsingIndex
- *
- ****************************************/
+_Elf32_Shdr *getSectionInfoNameUsingIndex(InStream *myFile, Elf32_Shdr *sh, int index);
 _Elf32_Shdr *getSectionInfoUsingIndex(InStream *myFile, Elf32_Shdr *sh, int index);
+_Elf32_Shdr *getAllSectionInfo(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh);
 
-_Elf32_Shdr *getSectionInfoName(InStream *myFile, Elf32_Shdr *sh, int index);
 
 #endif // Get_File_Header_H
 
