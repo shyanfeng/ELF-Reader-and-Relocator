@@ -196,12 +196,40 @@ _Elf32_Shdr *getAllSectionInfo(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh)
   
   return getShInfo;
 }
+// get index by name
+int getIndexOfSectionByName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, char *name){
+  _Elf32_Shdr *getShIndexByName;
+  int i;
+  
+  getShIndexByName = getAllSectionInfo(myFile, sh, eh); 
+  
+  for(i = 0; i < eh->e_shnum; i++){
+    if(strcmp(getShIndexByName[i].name , name) == 0){
+      return i;
+    }
+  }
+  
+  return -1;
+}
 
+int getSectionAddress(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
+  _Elf32_Shdr *getShIndexByName;
+  getShIndexByName = getAllSectionInfo(myFile, sh, eh);
+  int *addressFromIndex = (int *)(&getShIndexByName[index]);
+  
+  printf("%x\n", *addressFromIndex);
 
+  return *addressFromIndex;
+}
 
-
-
-
+int getSectionSize(InStream *myFile, Elf32_Ehdr *eh, int index){
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  int sectionSize;
+  
+  sectionSize = sh[index].sh_size;
+  
+  return sectionSize;
+}
 
 
 

@@ -347,3 +347,61 @@ void test_getAllSectionInfo_of_name_and_section(void){
   
   closeFileInTxt(myFile);
 }
+/*******************************************************************
+ *
+ *                      Get index by name
+ *
+ *******************************************************************/
+void test_getIndexOfSectionByName_with_isr_vector(void){
+  InStream *myFile;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  int indexName;
+  
+  TEST_ASSERT_EQUAL(1, getIndexOfSectionByName(myFile, sh, eh, ".isr_vector"));
+}
+
+void test_getIndexOfSectionByName_invalid_not_found_should_return_neg_1(void){
+  InStream *myFile;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  int indexName;
+  
+  TEST_ASSERT_EQUAL(-1, getIndexOfSectionByName(myFile, sh, eh, ".shouldFail"));
+}
+
+/*******************************************************************
+ *
+ *                      Get section address by index
+ *
+ *******************************************************************/
+void test_getSectionAddress_with_index_1(void){
+  InStream *myFile;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+
+  TEST_ASSERT_EQUAL(0x4535912, getSectionAddress(myFile, sh, eh, 1));
+}
+
+/*******************************************************************
+ *
+ *                      Get section size by index
+ *
+ *******************************************************************/
+void test_getSectionSize_with_index_1(void){
+  InStream *myFile;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  
+  TEST_ASSERT_EQUAL(428, getSectionSize(myFile, eh, 1));
+}
+
+
