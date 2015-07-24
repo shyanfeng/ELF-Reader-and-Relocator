@@ -9,7 +9,11 @@
 void setUp(void){}
 
 void tearDown(void){}
-// File Header
+/******************************************************************
+ *
+ *                            ELF Header
+ *
+ ******************************************************************/
 void test_getElfHeader(void){
   InStream *myFile;
 
@@ -50,7 +54,11 @@ void test_getElfHeader(void){
   closeFileInTxt(myFile);
 }
 
-// Program Header
+/******************************************************************
+ *
+ *                          Program Header
+ *
+ ******************************************************************/
 void test_GetProgramHeaders(void){
   InStream *myFile;
   
@@ -88,7 +96,11 @@ void test_GetProgramHeaders(void){
   closeFileInTxt(myFile);
 }
 
-// Section Header
+/******************************************************************
+ *
+ *                        Section Header
+ *
+ ******************************************************************/
 void test_getSectionHeaders(void){
   InStream *myFile;
 
@@ -231,7 +243,11 @@ void test_getSectionHeaders(void){
   closeFileInTxt(myFile);
 }
 
-// Symbol Table
+/******************************************************************
+ *
+ *                            Symbol Table
+ *
+ ******************************************************************/
 void test_getSymbolTables(void){
   InStream *myFile;
   
@@ -312,43 +328,22 @@ void test_getSymbolTables(void){
   
   closeFileInTxt(myFile);
 }
-
-void test_getSectionInfoName_with_index_7(void){
+/******************************************************************
+ *
+ *                       Info of Section and Name
+ *
+ ******************************************************************/
+void test_getAllSectionInfo_of_name_and_section(void){
   InStream *myFile;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   Elf32_Ehdr *eh = getElfHeader(myFile);
   Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  _Elf32_Shdr *getShInfoName = (_Elf32_Shdr*)getSectionInfoName(myFile, sh, 7);
+  _Elf32_Shdr *getShInfoName = (_Elf32_Shdr*)getAllSectionInfo(myFile, sh, eh);
   
-  TEST_ASSERT_EQUAL_STRING(".ccmram", getShInfoName->name);
-  
-  closeFileInTxt(myFile);
-}
-
-void test_getSectionInfoUsingIndex_with_index_1(void){
-  InStream *myFile;
-  
-  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  _Elf32_Shdr *getShInfoName = (_Elf32_Shdr*)getSectionInfoUsingIndex(myFile, sh, 1);
-  
-  TEST_ASSERT_EQUAL_STRING(".isr_vector", getShInfoName->name);
+  TEST_ASSERT_EQUAL_STRING(".isr_vector", getShInfoName[1].name);
+  TEST_ASSERT_EQUAL_STRING(".init_array", getShInfoName[4].name);
+  TEST_ASSERT_EQUAL_STRING(".ccmram", getShInfoName[7].name);
   
   closeFileInTxt(myFile);
 }
-
-void test_getSectionInfoUsingIndex_with_index_5(void){
-  InStream *myFile;
-  
-  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  _Elf32_Shdr *getShInfoName = (_Elf32_Shdr*)getSectionInfoUsingIndex(myFile, sh, 5);
-  
-  TEST_ASSERT_EQUAL_STRING(".fini_array", getShInfoName->name);
-  
-  closeFileInTxt(myFile);
-}
-
