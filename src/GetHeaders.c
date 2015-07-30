@@ -212,25 +212,31 @@ int getIndexOfSectionByName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, ch
   return -1;
 }
 
-int getSectionAddress(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index){
-  _Elf32_Shdr *getShIndexByName;
-  getShIndexByName = getAllSectionInfo(myFile, sh, eh);
-  int *addressFromIndex = (int *)(&getShIndexByName[index]);
+int getSectionAddress(InStream *myFile, Elf32_Shdr *sh, int index){
+  int secAddress;
+  secAddress = sh[index].sh_addr;
   
-  printf("%x\n", *addressFromIndex);
-
-  return *addressFromIndex;
+  return secAddress;
 }
 
-int getSectionSize(InStream *myFile, Elf32_Ehdr *eh, int index){
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+int getSectionSize(InStream *myFile, Elf32_Shdr *sh, int index){
   int sectionSize;
-  
   sectionSize = sh[index].sh_size;
   
   return sectionSize;
 }
 
+Elf32_Rel *getRelocation(InStream *myFile, Elf32_Shdr *sh){
+  int i, rel_Entries, sizeToMalloc;
+  
+  for(i = 0; sh[i].sh_type != SHT_REL; i++);
+  rel_Entries = sh[i].sh_size / 8;
+  sizeToMalloc = rel_Entries * sizeof(Elf32_Rel);
+  Elf32_Rel *getRel = malloc(sizeToMalloc);
+  
+  inStreamMoveFilePtr(myFile, sh[i].sh_offset);
+  fread(getRel, sizeToMalloc, 1, myFile->file);
 
-
+  return getRel;
+}
 

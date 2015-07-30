@@ -385,10 +385,20 @@ void test_getSectionAddress_with_index_1(void){
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   Elf32_Ehdr *eh = getElfHeader(myFile);
   Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-
-  TEST_ASSERT_EQUAL(0x4535912, getSectionAddress(myFile, sh, eh, 1));
+  
+  TEST_ASSERT_EQUAL_HEX32(0x08000000, getSectionAddress(myFile, sh, 1));
 }
 
+void test_getSectionAddress_with_index_5(void){
+  InStream *myFile;
+  
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x08001068, getSectionAddress(myFile, sh, 5));
+}
+ 
 /*******************************************************************
  *
  *                      Get section size by index
@@ -401,7 +411,33 @@ void test_getSectionSize_with_index_1(void){
   Elf32_Ehdr *eh = getElfHeader(myFile);
   Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
   
-  TEST_ASSERT_EQUAL(428, getSectionSize(myFile, eh, 1));
+  TEST_ASSERT_EQUAL(428, getSectionSize(myFile, sh, 1));
 }
 
+void test_getRelocation(void){
+  InStream *myFile;
+  
+  myFile = openFile("test/Relocation_File/add.o", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  Elf32_Rel *rel = getRelocation(myFile, sh);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000006, rel[0].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000702, rel[0].r_info);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x0000000c, rel[1].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000a02, rel[1].r_info);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000011, rel[2].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000a02, rel[2].r_info);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000015, rel[3].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000202, rel[3].r_info);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x0000001d, rel[4].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000902, rel[4].r_info);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x0000002c, rel[5].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000202, rel[5].r_info);
 
+}

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="arm-none-eabi-gcc 4.8.1 mingw32 -mcpu=cortex-m4 -mthumb -g2 -Wall -O0 -c -DSTM32F429ZI -I..\..\..\..\..\..\..\CoIDE\workspace\test1\app -I..\..\..\..\..\..\..\CoIDE\workspace\test1 -I..\..\..\..\..\..\..\CoIDE\workspace">
+      <target file="add.o" lastModified="14ebeffb2a3">
+         <source file="..\..\..\app\add.c" lastModified="14ebefef6ee"/>
+      </target>
+      <target file="main.o" lastModified="14ebeffb283">
+         <source file="..\..\..\app\main.c" lastModified="14ebefface9"/>
+      </target>
+   </processor>
+</history>

@@ -26,10 +26,10 @@ _Elf32_Shdr *getAllSectionInfo(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh)
 
 
 int getIndexOfSectionByName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, char *name);
-int getSectionAddress(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, int index);
-int getSectionSize(InStream *myFile, Elf32_Ehdr *eh, int index);
+int getSectionAddress(InStream *myFile, Elf32_Shdr *sh, int index);
+int getSectionSize(InStream *myFile, Elf32_Shdr *sh, int index);
+
+Elf32_Rel *getRelocation(InStream *myFile, Elf32_Shdr *sh);
 
 #endif // Get_File_Header_H
 
-// void printSectionHeaderStringTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh);
-// void printStringTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh, Elf32_Sym *st);
