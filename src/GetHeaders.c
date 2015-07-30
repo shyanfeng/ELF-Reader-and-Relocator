@@ -268,6 +268,15 @@ int getSectionSize(InStream *myFile, Elf32_Shdr *sh, int index){
   return sectionSize;
 }
 
+uint32_t *getSectionData(InStream *myFile, Elf32_Shdr *sh, int index){
+  int *data = malloc(sh[index].sh_size);
+  
+  inStreamMoveFilePtr(myFile, sh[index].sh_offset);
+  fread(data, sh[index].sh_size, 1, myFile->file);
+
+  return data;
+}
+
 Elf32_Rel *getRelocation(InStream *myFile, Elf32_Shdr *sh){
   int i, rel_Entries, sizeToMalloc;
   
@@ -282,18 +291,18 @@ Elf32_Rel *getRelocation(InStream *myFile, Elf32_Shdr *sh){
   return getRel;
 }
 
-char *getRelSymbolName(InStream *myFile, Elf32_Shdr *sh, Elf32_Rel *getRel, Elf32_Sym *getSymTab, int index){
+char *getRelSymbolName(InStream *myFile, Elf32_Shdr *sh, Elf32_Rel *getRel, Elf32_Sym *st, int index){
   int symbolIndex, sectIndex;
 
   symbolIndex = ELF32_R_SYM(getRel[index].r_info);
-  sectIndex = getSymTab[symbolIndex].st_shndx;
+  sectIndex = st[symbolIndex].st_shndx;
   
   _Elf32_Shdr *getSectName = getSectionInfoNameUsingIndex(myFile, sh, sectIndex);
   
   return (char *)getSectName;
 }
 
-int getRelType(InStream *myFile, Elf32_Shdr *sh, Elf32_Rel *getRel, int index){
+uint32_t getRelType(InStream *myFile, Elf32_Rel *getRel, int index){
   int sectType;
   
   sectType = ELF32_R_TYPE(getRel[index].r_info);
@@ -301,14 +310,6 @@ int getRelType(InStream *myFile, Elf32_Shdr *sh, Elf32_Rel *getRel, int index){
   return sectType;
 }
 
-uint32_t *getSectionData(InStream *myFile, Elf32_Shdr *sh, int index){
-  int *data = malloc(sh[index].sh_size);
-  
-  inStreamMoveFilePtr(myFile, sh[index].sh_offset);
-  fread(data, sh[index].sh_size, 1, myFile->file);
-
-  return data;
-}
 
 
 
