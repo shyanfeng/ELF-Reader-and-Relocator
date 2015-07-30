@@ -328,6 +328,7 @@ void test_getSymbolTables(void){
   
   closeFileInTxt(myFile);
 }
+
 /******************************************************************
  *
  *                       Info of Section and Name
@@ -339,7 +340,7 @@ void test_getAllSectionInfo_of_name_and_section(void){
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
   Elf32_Ehdr *eh = getElfHeader(myFile);
   Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  _Elf32_Shdr *getShInfoName = (_Elf32_Shdr*)getAllSectionInfo(myFile, sh, eh);
+  _Elf32_Shdr *getShInfoName = getAllSectionInfo(myFile, sh, eh);
   
   TEST_ASSERT_EQUAL_STRING(".isr_vector", getShInfoName[1].name);
   TEST_ASSERT_EQUAL_STRING(".init_array", getShInfoName[4].name);
@@ -347,6 +348,7 @@ void test_getAllSectionInfo_of_name_and_section(void){
   
   closeFileInTxt(myFile);
 }
+
 /*******************************************************************
  *
  *                      Get index by name
@@ -439,5 +441,75 @@ void test_getRelocation(void){
   
   TEST_ASSERT_EQUAL_HEX32(0x0000002c, rel[5].r_offset);
   TEST_ASSERT_EQUAL_HEX32(0x00000202, rel[5].r_info);
+
+}
+
+void test_getRelSymbol_with_index_0(void){
+  InStream *myFile;
+
+  myFile = openFile("test/Relocation_File/add.o", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  Elf32_Rel *rel = getRelocation(myFile, sh);
+  Elf32_Sym *st = getSymbolTables(myFile, eh, sh);
+  
+  TEST_ASSERT_EQUAL_STRING(".debug_abbrev", getRelSymbolName(myFile, sh, rel, st, 0));
+  
+}
+
+void test_getRelSymbol_with_index_3(void){
+  InStream *myFile;
+
+  myFile = openFile("test/Relocation_File/add.o", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  Elf32_Rel *rel = getRelocation(myFile, sh);
+  Elf32_Sym *st = getSymbolTables(myFile, eh, sh);
+  
+  TEST_ASSERT_EQUAL_STRING(".text", getRelSymbolName(myFile, sh, rel, st, 3));
+  
+}
+
+void test_getRelType_with_index_1_should_return_R_ARM_ABS32(void){
+  InStream *myFile;
+  
+  myFile = openFile("test/Relocation_File/add.o", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  Elf32_Rel *rel = getRelocation(myFile, sh);
+  
+  TEST_ASSERT_EQUAL(R_ARM_ABS32, getRelType(myFile, sh, rel, 1));
+
+}
+
+void test_getSectionData_with_index_1(void){
+  InStream *myFile;
+  int i;
+  
+  myFile = openFile("test/Relocation_File/add.o", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  uint32_t *getRead = getSectionData(myFile, sh, 1);
+  
+  TEST_ASSERT_EQUAL_HEX32(0xb083b480, getRead[0]);
+  TEST_ASSERT_EQUAL_HEX32(0x6078af00, getRead[1]);
+  TEST_ASSERT_EQUAL_HEX32(0x47707b04, getRead[6]);
+}
+
+void test_getSectionData_with_index_4(void){
+  InStream *myFile;
+  int i;
+  
+  myFile = openFile("test/Relocation_File/add.o", "rb+");
+  Elf32_Ehdr *eh = getElfHeader(myFile);
+  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  uint32_t *getRead = getSectionData(myFile, sh, 4);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x00000057, getRead[0]);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, getRead[3]);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, getRead[7]);
+  TEST_ASSERT_EQUAL_HEX32(0x03010064, getRead[9]);
+  TEST_ASSERT_EQUAL_HEX32(0x6e690504, getRead[21]);
+  TEST_ASSERT_EQUAL_HEX32(0x000074, getRead[22]);
 
 }

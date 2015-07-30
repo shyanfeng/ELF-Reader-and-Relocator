@@ -30,6 +30,10 @@ int getSectionAddress(InStream *myFile, Elf32_Shdr *sh, int index);
 int getSectionSize(InStream *myFile, Elf32_Shdr *sh, int index);
 
 Elf32_Rel *getRelocation(InStream *myFile, Elf32_Shdr *sh);
+char *getRelSymbolName(InStream *myFile, Elf32_Shdr *sh, Elf32_Rel *getRel, Elf32_Sym *getSymTab, int index);
+int getRelType(InStream *myFile, Elf32_Shdr *sh, Elf32_Rel *getRel, int index);
+
+uint32_t *getSectionData(InStream *myFile, Elf32_Shdr *sh, int index);
 
 #endif // Get_File_Header_H
 

@@ -196,22 +196,50 @@ _Elf32_Shdr *getAllSectionInfo(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh)
   
   return getShInfo;
 }
-// get index by name
+
+/******************************************************************************
+ * Get Section Index From Section Name
+ *
+ *  Operation:
+ *          To get the index of section in section header from the section name
+ *  
+ *  Data:
+ *          The index of section
+ *
+ *  Return:
+ *          index(Name Matched)
+ *          -1 (Not Matched)
+ *
+ ******************************************************************************/
 int getIndexOfSectionByName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, char *name){
   _Elf32_Shdr *getShIndexByName;
-  int i;
+  int index;
   
   getShIndexByName = getAllSectionInfo(myFile, sh, eh); 
   
-  for(i = 0; i < eh->e_shnum; i++){
-    if(strcmp(getShIndexByName[i].name , name) == 0){
-      return i;
+  for(index = 0; index < eh->e_shnum; index++){
+    if(strcmp(getShIndexByName[index].name , name) == 0){
+      return index;
     }
   }
   
   return -1;
 }
 
+/******************************************************************************
+ * Get Section Address From Section Index
+ *
+ *  Operation:
+ *          To get the address of section in section header from the section 
+ *          index
+ *  
+ *  Data:
+ *          The address of section
+ *
+ *  Return:
+ *          secAddress
+ *
+ ******************************************************************************/
 int getSectionAddress(InStream *myFile, Elf32_Shdr *sh, int index){
   int secAddress;
   secAddress = sh[index].sh_addr;
@@ -219,6 +247,20 @@ int getSectionAddress(InStream *myFile, Elf32_Shdr *sh, int index){
   return secAddress;
 }
 
+/******************************************************************************
+ * Get Section Size From Section Index
+ *
+ *  Operation:
+ *          To get the size of section in section header from the section 
+ *          index
+ *  
+ *  Data:
+ *          The size of section
+ *
+ *  Return:
+ *          sectionSize
+ *
+ ******************************************************************************/
 int getSectionSize(InStream *myFile, Elf32_Shdr *sh, int index){
   int sectionSize;
   sectionSize = sh[index].sh_size;
@@ -239,4 +281,36 @@ Elf32_Rel *getRelocation(InStream *myFile, Elf32_Shdr *sh){
 
   return getRel;
 }
+
+char *getRelSymbolName(InStream *myFile, Elf32_Shdr *sh, Elf32_Rel *getRel, Elf32_Sym *getSymTab, int index){
+  int symbolIndex, sectIndex;
+
+  symbolIndex = ELF32_R_SYM(getRel[index].r_info);
+  sectIndex = getSymTab[symbolIndex].st_shndx;
+  
+  _Elf32_Shdr *getSectName = getSectionInfoNameUsingIndex(myFile, sh, sectIndex);
+  
+  return (char *)getSectName;
+}
+
+int getRelType(InStream *myFile, Elf32_Shdr *sh, Elf32_Rel *getRel, int index){
+  int sectType;
+  
+  sectType = ELF32_R_TYPE(getRel[index].r_info);
+  
+  return sectType;
+}
+
+uint32_t *getSectionData(InStream *myFile, Elf32_Shdr *sh, int index){
+  int *data = malloc(sh[index].sh_size);
+  
+  inStreamMoveFilePtr(myFile, sh[index].sh_offset);
+  fread(data, sh[index].sh_size, 1, myFile->file);
+
+  return data;
+}
+
+
+
+
 
