@@ -11,9 +11,9 @@ void test_open_exist_file(void){
   InStream *myFile;
   
   myFile = openFile("test/Data/FirstTry.txt", "rb");
-  closeFileInTxt(myFile);
   
   TEST_ASSERT_NOT_NULL(myFile->file);
+  closeFileInTxt(myFile);
   
 }
 
