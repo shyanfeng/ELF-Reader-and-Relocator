@@ -6,7 +6,9 @@
 #include "ProgramElf.h"
 #include <stdlib.h>
 
-void setUp(void){}
+void setUp(void){
+  initElfData();
+}
 
 void tearDown(void){}
 /******************************************************************
@@ -15,43 +17,41 @@ void tearDown(void){}
  *
  ******************************************************************/
 void test_getElfHeader(void){
-  InStream *myFile;
-
-  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
   
-  TEST_ASSERT_EQUAL_HEX8(ELFMAG0, eh->e_ident[EI_MAG0]);
-  TEST_ASSERT_EQUAL_HEX8(ELFMAG1, eh->e_ident[EI_MAG1]);
-  TEST_ASSERT_EQUAL_HEX8(ELFMAG2, eh->e_ident[EI_MAG2]);
-  TEST_ASSERT_EQUAL_HEX8(ELFMAG3, eh->e_ident[EI_MAG3]);
-  TEST_ASSERT_EQUAL_HEX8(ELFCLASS32, eh->e_ident[EI_CLASS]);
-  TEST_ASSERT_EQUAL_HEX8(ELFDATA2LSB, eh->e_ident[EI_DATA]);
-  TEST_ASSERT_EQUAL_HEX8(EV_CURRENT, eh->e_ident[EI_VERSION]);
-  TEST_ASSERT_EQUAL_HEX8(ELFOSABI_SYSV, eh->e_ident[EI_OSABI]);
-  TEST_ASSERT_EQUAL_HEX8(0, eh->e_ident[EI_ABIVERSION]);
-  TEST_ASSERT_EQUAL_HEX8(0, eh->e_ident[EI_PAD]);
-  TEST_ASSERT_EQUAL_HEX8(0, eh->e_ident[10]);
-  TEST_ASSERT_EQUAL_HEX8(0, eh->e_ident[11]);
-  TEST_ASSERT_EQUAL_HEX8(0, eh->e_ident[12]);
-  TEST_ASSERT_EQUAL_HEX8(0, eh->e_ident[13]);
-  TEST_ASSERT_EQUAL_HEX8(0, eh->e_ident[14]);
-  TEST_ASSERT_EQUAL_HEX8(0, eh->e_ident[15]);
+  TEST_ASSERT_EQUAL_HEX8(ELFMAG0, dataFromElf->eh->e_ident[EI_MAG0]);
+  TEST_ASSERT_EQUAL_HEX8(ELFMAG1, dataFromElf->eh->e_ident[EI_MAG1]);
+  TEST_ASSERT_EQUAL_HEX8(ELFMAG2, dataFromElf->eh->e_ident[EI_MAG2]);
+  TEST_ASSERT_EQUAL_HEX8(ELFMAG3, dataFromElf->eh->e_ident[EI_MAG3]);
+  TEST_ASSERT_EQUAL_HEX8(ELFCLASS32, dataFromElf->eh->e_ident[EI_CLASS]);
+  TEST_ASSERT_EQUAL_HEX8(ELFDATA2LSB, dataFromElf->eh->e_ident[EI_DATA]);
+  TEST_ASSERT_EQUAL_HEX8(EV_CURRENT, dataFromElf->eh->e_ident[EI_VERSION]);
+  TEST_ASSERT_EQUAL_HEX8(ELFOSABI_SYSV, dataFromElf->eh->e_ident[EI_OSABI]);
+  TEST_ASSERT_EQUAL_HEX8(0, dataFromElf->eh->e_ident[EI_ABIVERSION]);
+  TEST_ASSERT_EQUAL_HEX8(0, dataFromElf->eh->e_ident[EI_PAD]);
+  TEST_ASSERT_EQUAL_HEX8(0, dataFromElf->eh->e_ident[10]);
+  TEST_ASSERT_EQUAL_HEX8(0, dataFromElf->eh->e_ident[11]);
+  TEST_ASSERT_EQUAL_HEX8(0, dataFromElf->eh->e_ident[12]);
+  TEST_ASSERT_EQUAL_HEX8(0, dataFromElf->eh->e_ident[13]);
+  TEST_ASSERT_EQUAL_HEX8(0, dataFromElf->eh->e_ident[14]);
+  TEST_ASSERT_EQUAL_HEX8(0, dataFromElf->eh->e_ident[15]);
   
-  TEST_ASSERT_EQUAL_HEX16(ET_EXEC, eh->e_type);
-  TEST_ASSERT_EQUAL_HEX16(0x0028, eh->e_machine);
-  TEST_ASSERT_EQUAL_HEX32(0x00000001, eh->e_version);
-  TEST_ASSERT_EQUAL_HEX32(0x08000fed, eh->e_entry);
-  TEST_ASSERT_EQUAL_HEX32(0x00000034, eh->e_phoff);
-  TEST_ASSERT_EQUAL_HEX32(0x00013168, eh->e_shoff);
-  TEST_ASSERT_EQUAL_HEX32(0x05000202, eh->e_flags);
-  TEST_ASSERT_EQUAL_HEX16(0x0034, eh->e_ehsize);
-  TEST_ASSERT_EQUAL_HEX16(0x0020, eh->e_phentsize);
-  TEST_ASSERT_EQUAL_HEX16(0x0003, eh->e_phnum);
-  TEST_ASSERT_EQUAL_HEX16(0x0028, eh->e_shentsize);
-  TEST_ASSERT_EQUAL_HEX16(0x0016, eh->e_shnum);
-  TEST_ASSERT_EQUAL_HEX16(0x0013, eh->e_shstrndx);
+  TEST_ASSERT_EQUAL_HEX16(ET_EXEC, dataFromElf->eh->e_type);
+  TEST_ASSERT_EQUAL_HEX16(0x0028, dataFromElf->eh->e_machine);
+  TEST_ASSERT_EQUAL_HEX32(0x00000001, dataFromElf->eh->e_version);
+  TEST_ASSERT_EQUAL_HEX32(0x08000fed, dataFromElf->eh->e_entry);
+  TEST_ASSERT_EQUAL_HEX32(0x00000034, dataFromElf->eh->e_phoff);
+  TEST_ASSERT_EQUAL_HEX32(0x00013168, dataFromElf->eh->e_shoff);
+  TEST_ASSERT_EQUAL_HEX32(0x05000202, dataFromElf->eh->e_flags);
+  TEST_ASSERT_EQUAL_HEX16(0x0034, dataFromElf->eh->e_ehsize);
+  TEST_ASSERT_EQUAL_HEX16(0x0020, dataFromElf->eh->e_phentsize);
+  TEST_ASSERT_EQUAL_HEX16(0x0003, dataFromElf->eh->e_phnum);
+  TEST_ASSERT_EQUAL_HEX16(0x0028, dataFromElf->eh->e_shentsize);
+  TEST_ASSERT_EQUAL_HEX16(0x0016, dataFromElf->eh->e_shnum);
+  TEST_ASSERT_EQUAL_HEX16(0x0013, dataFromElf->eh->e_shstrndx);
   
-  closeFileInTxt(myFile);
+  closeFileInTxt(dataFromElf->myFile);
 }
 
 /******************************************************************
@@ -59,7 +59,7 @@ void test_getElfHeader(void){
  *                          Program Header
  *
  ******************************************************************/
-void test_GetProgramHeaders(void){
+/*void test_GetProgramHeaders(void){
   InStream *myFile;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
@@ -94,14 +94,14 @@ void test_GetProgramHeaders(void){
   TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[2].p_align);
   
   closeFileInTxt(myFile);
-}
+}*/
 
 /******************************************************************
  *
  *                        Section Header
  *
  ******************************************************************/
-void test_getSectionHeaders(void){
+/*void test_getSectionHeaders(void){
   InStream *myFile;
 
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
@@ -241,14 +241,14 @@ void test_getSectionHeaders(void){
   TEST_ASSERT_EQUAL_HEX32(0x00000000, sh[21].sh_entsize);
   
   closeFileInTxt(myFile);
-}
+}*/
 
 /******************************************************************
  *
  *                            Symbol Table
  *
  ******************************************************************/
-void test_getSymbolTables(void){
+/*void test_getSymbolTables(void){
   InStream *myFile;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
@@ -327,14 +327,14 @@ void test_getSymbolTables(void){
   TEST_ASSERT_EQUAL_HEX16(0x0002, st[289].st_shndx);
   
   closeFileInTxt(myFile);
-}
+}*/
 
 /******************************************************************
  *
  *                       Info of Section and Name
  *
  ******************************************************************/
-void test_getAllSectionInfo_of_name_and_section(void){
+/*void test_getAllSectionInfo_of_name_and_section(void){
   InStream *myFile;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
@@ -347,14 +347,14 @@ void test_getAllSectionInfo_of_name_and_section(void){
   TEST_ASSERT_EQUAL_STRING(".ccmram", getShInfoName[7].name);
   
   closeFileInTxt(myFile);
-}
+}*/
 
 /*******************************************************************
  *
  *                      Get index by name
  *
  *******************************************************************/
-void test_getIndexOfSectionByName_with_isr_vector(void){
+/*void test_getIndexOfSectionByName_with_isr_vector(void){
   InStream *myFile;
   
   myFile = openFile("test/ELF_File/Test01.elf", "rb+");
@@ -374,145 +374,103 @@ void test_getIndexOfSectionByName_invalid_not_found_should_return_neg_1(void){
   int indexName;
   
   TEST_ASSERT_EQUAL(-1, getIndexOfSectionByName(myFile, sh, eh, ".shouldFail"));
-}
+}*/
 
 /*******************************************************************
  *
  *                      Get section address by index
  *
  *******************************************************************/
-void test_getSectionAddress_with_index_1(void){
-  InStream *myFile;
+/*void test_getSectionAddress_with_index_5(void){
+  ElfData *dataFromElf;
   
-  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf->myFile);
+  dataFromElf->sh = getSectionHeaders(dataFromElf->myFile, dataFromElf->eh);
   
-  TEST_ASSERT_EQUAL_HEX32(0x08000000, getSectionAddress(myFile, sh, 1));
-}
-
-void test_getSectionAddress_with_index_5(void){
-  InStream *myFile;
-  
-  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  
-  TEST_ASSERT_EQUAL_HEX32(0x08001068, getSectionAddress(myFile, sh, 5));
-}
+  TEST_ASSERT_EQUAL_HEX32(0x08001068, getSectionAddress(dataFromElf, 5));
+}*/
  
 /*******************************************************************
  *
  *                      Get section size by index
  *
  *******************************************************************/
-void test_getSectionSize_with_index_1(void){
-  InStream *myFile;
+/*void test_getSectionSize_with_index_1(void){
+  ElfData *dataFromElf;
   
-  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf->myFile);
+  dataFromElf->sh = getSectionHeaders(dataFromElf->myFile, dataFromElf->eh);
   
-  TEST_ASSERT_EQUAL(428, getSectionSize(myFile, sh, 1));
-}
-
-void test_getSectionData_with_index_1(void){
-  InStream *myFile;
-  int i;
-  
-  myFile = openFile("test/Relocation_File/add.o", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  uint32_t *getRead = getSectionData(myFile, sh, 1);
-  
-  TEST_ASSERT_EQUAL_HEX32(0xb083b480, getRead[0]);
-  TEST_ASSERT_EQUAL_HEX32(0x6078af00, getRead[1]);
-  TEST_ASSERT_EQUAL_HEX32(0x47707b04, getRead[6]);
-}
-
-void test_getSectionData_with_index_4(void){
-  InStream *myFile;
-  int i;
-  
-  myFile = openFile("test/Relocation_File/add.o", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  uint32_t *getRead = getSectionData(myFile, sh, 4);
-  
-  TEST_ASSERT_EQUAL_HEX32(0x00000057, getRead[0]);
-  TEST_ASSERT_EQUAL_HEX32(0x00000000, getRead[3]);
-  TEST_ASSERT_EQUAL_HEX32(0x00000000, getRead[7]);
-  TEST_ASSERT_EQUAL_HEX32(0x03010064, getRead[9]);
-  TEST_ASSERT_EQUAL_HEX32(0x6e690504, getRead[21]);
-  TEST_ASSERT_EQUAL_HEX32(0x000074, getRead[22]);
-
+  TEST_ASSERT_EQUAL(428, getSectionSize(dataFromElf, 1));
 }
 
 // get Relocate offset n info
 void test_getRelocation(void){
-  InStream *myFile;
+  ElfData *dataFromElf;
   
-  myFile = openFile("test/Relocation_File/add.o", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  Elf32_Rel *rel = getRelocation(myFile, sh);
+  dataFromElf->myFile = openFile("test/Relocation_File/add.o", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf->myFile);
+  dataFromElf->sh = getSectionHeaders(dataFromElf->myFile, dataFromElf->eh);
+  dataFromElf->rel = getRelocation(dataFromElf);
   
-  TEST_ASSERT_EQUAL_HEX32(0x00000006, rel[0].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000702, rel[0].r_info);
+  TEST_ASSERT_EQUAL_HEX32(0x00000006, dataFromElf->rel[0].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000702, dataFromElf->rel[0].r_info);
   
-  TEST_ASSERT_EQUAL_HEX32(0x0000000c, rel[1].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000a02, rel[1].r_info);
+  TEST_ASSERT_EQUAL_HEX32(0x0000000c, dataFromElf->rel[1].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000a02, dataFromElf->rel[1].r_info);
   
-  TEST_ASSERT_EQUAL_HEX32(0x00000011, rel[2].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000a02, rel[2].r_info);
+  TEST_ASSERT_EQUAL_HEX32(0x00000011, dataFromElf->rel[2].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000a02, dataFromElf->rel[2].r_info);
   
-  TEST_ASSERT_EQUAL_HEX32(0x00000015, rel[3].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000202, rel[3].r_info);
+  TEST_ASSERT_EQUAL_HEX32(0x00000015, dataFromElf->rel[3].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000202, dataFromElf->rel[3].r_info);
   
-  TEST_ASSERT_EQUAL_HEX32(0x0000001d, rel[4].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000902, rel[4].r_info);
+  TEST_ASSERT_EQUAL_HEX32(0x0000001d, dataFromElf->rel[4].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000902, dataFromElf->rel[4].r_info);
   
-  TEST_ASSERT_EQUAL_HEX32(0x0000002c, rel[5].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000202, rel[5].r_info);
+  TEST_ASSERT_EQUAL_HEX32(0x0000002c, dataFromElf->rel[5].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x00000202, dataFromElf->rel[5].r_info);
 
 }
 
 // get Relocate symbol
 void test_getRelSymbol_with_index_0(void){
-  InStream *myFile;
+  ElfData *dataFromElf;
 
-  myFile = openFile("test/Relocation_File/add.o", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  Elf32_Rel *rel = getRelocation(myFile, sh);
-  Elf32_Sym *st = getSymbolTables(myFile, eh, sh);
+  dataFromElf->myFile = openFile("test/Relocation_File/add.o", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf->myFile);
+  dataFromElf->sh = getSectionHeaders(dataFromElf->myFile, dataFromElf->eh);
+  dataFromElf->rel = getRelocation(dataFromElf);
+  dataFromElf->st = getSymbolTables(dataFromElf->myFile, dataFromElf->eh, dataFromElf->sh);
   
-  TEST_ASSERT_EQUAL_STRING(".debug_abbrev", getRelSymbolName(myFile, sh, rel, st, 0));
+  TEST_ASSERT_EQUAL_STRING(".debug_abbrev", getRelSymbolName(dataFromElf, 0));
   
 }
 
 void test_getRelSymbol_with_index_3(void){
-  InStream *myFile;
+  ElfData *dataFromElf;
 
-  myFile = openFile("test/Relocation_File/add.o", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  Elf32_Rel *rel = getRelocation(myFile, sh);
-  Elf32_Sym *st = getSymbolTables(myFile, eh, sh);
+  dataFromElf->myFile = openFile("test/Relocation_File/add.o", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf->myFile);
+  dataFromElf->sh = getSectionHeaders(dataFromElf->myFile, dataFromElf->eh);
+  dataFromElf->rel = getRelocation(dataFromElf);
+  dataFromElf->st = getSymbolTables(dataFromElf->myFile, dataFromElf->eh, dataFromElf->sh);
   
-  TEST_ASSERT_EQUAL_STRING(".text", getRelSymbolName(myFile, sh, rel, st, 3));
+  TEST_ASSERT_EQUAL_STRING(".text", getRelSymbolName(dataFromElf, 3));
   
 }
 // get Relocate type
 void test_getRelType_with_index_1_should_return_R_ARM_ABS32(void){
-  InStream *myFile;
+  ElfData *dataFromElf;
   
-  myFile = openFile("test/Relocation_File/add.o", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Shdr *sh = getSectionHeaders(myFile, eh);
-  Elf32_Rel *rel = getRelocation(myFile, sh);
+  dataFromElf->myFile = openFile("test/Relocation_File/add.o", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf->myFile);
+  dataFromElf->sh = getSectionHeaders(dataFromElf->myFile, dataFromElf->eh);
+  dataFromElf->rel = getRelocation(dataFromElf);
   
-  TEST_ASSERT_EQUAL(R_ARM_ABS32, getRelType(myFile, rel, 1));
+  TEST_ASSERT_EQUAL(R_ARM_ABS32, getRelType(dataFromElf, 1));
 
 }
-
+*/

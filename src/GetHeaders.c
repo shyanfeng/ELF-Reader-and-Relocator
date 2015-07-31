@@ -6,6 +6,13 @@
 #include <malloc.h>
 #include "CException.h"
 #include "ErrorCode.h"
+
+ElfData *dataFromElf;
+
+void initElfData(){
+  dataFromElf = malloc(sizeof(ElfData));
+}
+
 /******************************************************************************
  * ELF Header
  *
@@ -21,13 +28,15 @@
  *          (The structure of Elf32_Ehdr with information of the ELF Header)
  *
  ******************************************************************************/
-Elf32_Ehdr *getElfHeader(InStream *myFile){
-  Elf32_Ehdr *eh = malloc(sizeof(Elf32_Ehdr));
+Elf32_Ehdr *getElfHeader(ElfData *dataFromElf){
+  dataFromElf->eh = malloc(sizeof(Elf32_Ehdr));
   
-  fread(eh, sizeof(Elf32_Ehdr), 1, myFile->file);
+  fread(dataFromElf->eh, sizeof(Elf32_Ehdr), 1, dataFromElf->myFile->file);
   
-  return eh;
+  return dataFromElf->eh;
 }
+
+
 
 /******************************************************************************
  * Program Header
@@ -45,7 +54,7 @@ Elf32_Ehdr *getElfHeader(InStream *myFile){
  *          (The structure of Elf32_Phdr with information of the Program Header)
  *
  ******************************************************************************/
-Elf32_Phdr *getProgramHeaders(InStream *myFile, Elf32_Ehdr *eh){
+/*Elf32_Phdr *getProgramHeaders(InStream *myFile, Elf32_Ehdr *eh){
   int phSizeToMalloc = sizeof(Elf32_Phdr) * (eh->e_phnum);
   Elf32_Phdr *ph = malloc(phSizeToMalloc);
 
@@ -53,7 +62,7 @@ Elf32_Phdr *getProgramHeaders(InStream *myFile, Elf32_Ehdr *eh){
   fread(ph, phSizeToMalloc, 1, myFile->file);
   
   return ph;
-}
+}*/
 
 /******************************************************************************
  * Section Header
@@ -71,7 +80,7 @@ Elf32_Phdr *getProgramHeaders(InStream *myFile, Elf32_Ehdr *eh){
  *          (The structure of Elf32_Shdr with information of the Section Header)
  *
  ******************************************************************************/
-Elf32_Shdr *getSectionHeaders(InStream *myFile, Elf32_Ehdr *eh){
+/*Elf32_Shdr *getSectionHeaders(InStream *myFile, Elf32_Ehdr *eh){
   int shSizeToMalloc = sizeof(Elf32_Shdr) * (eh->e_shnum);
   Elf32_Shdr *sh = malloc(shSizeToMalloc);
   
@@ -79,7 +88,7 @@ Elf32_Shdr *getSectionHeaders(InStream *myFile, Elf32_Ehdr *eh){
   fread(sh, shSizeToMalloc, 1, myFile->file);
   
   return sh;
-}
+}*/
 
 /******************************************************************************
  * Symbol Table
@@ -97,7 +106,7 @@ Elf32_Shdr *getSectionHeaders(InStream *myFile, Elf32_Ehdr *eh){
  *          (The structure of Elf32_Sym with information of the Symbol Table)
  *
  ******************************************************************************/
-Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
+/*Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
   int i, totalSymTabByte, entriesOfSymTab;
   int stSizeToMalloc;
   
@@ -110,7 +119,7 @@ Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
   
   return st;
   
-}
+}*/
 
 /******************************************************************************
  * Get Section Info Name Using Index
@@ -129,7 +138,7 @@ Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh){
  *          names
  *
  ******************************************************************************/
-_Elf32_Shdr *getSectionInfoNameUsingIndex(InStream *myFile, Elf32_Shdr *sh, int index){
+/*_Elf32_Shdr *getSectionInfoNameUsingIndex(InStream *myFile, Elf32_Shdr *sh, int index){
   char *names;
   int i;
   
@@ -140,7 +149,7 @@ _Elf32_Shdr *getSectionInfoNameUsingIndex(InStream *myFile, Elf32_Shdr *sh, int 
   fread(names, sh[i].sh_size, 1, myFile->file);
   
   return (_Elf32_Shdr*)names;
-}
+}*/
 
 /******************************************************************************
  * Get Section Info Using Index
@@ -158,7 +167,7 @@ _Elf32_Shdr *getSectionInfoNameUsingIndex(InStream *myFile, Elf32_Shdr *sh, int 
  *          sect
  *
  ******************************************************************************/
-_Elf32_Shdr *getSectionInfoUsingIndex(InStream *myFile, Elf32_Shdr *sh, int index){
+/*_Elf32_Shdr *getSectionInfoUsingIndex(InStream *myFile, Elf32_Shdr *sh, int index){
   _Elf32_Shdr *getShInfoUsingIndex, *getShInfoName;
   uint8_t *sect = malloc(sh[index].sh_size);
   
@@ -166,7 +175,7 @@ _Elf32_Shdr *getSectionInfoUsingIndex(InStream *myFile, Elf32_Shdr *sh, int inde
   fread(sect, sh[index].sh_size, 1, myFile->file);
 
   return (_Elf32_Shdr*)sect;
-}
+}*/
 
 /******************************************************************************
  * Get All Section Info
@@ -185,7 +194,7 @@ _Elf32_Shdr *getSectionInfoUsingIndex(InStream *myFile, Elf32_Shdr *sh, int inde
  *          (The structure of _Elf32_Shdr)
  *
  ******************************************************************************/
-_Elf32_Shdr *getAllSectionInfo(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh){
+/*_Elf32_Shdr *getAllSectionInfo(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh){
   _Elf32_Shdr *getShInfo = malloc(eh->e_shnum * sizeof(_Elf32_Shdr));
   int i, j;
   
@@ -195,7 +204,7 @@ _Elf32_Shdr *getAllSectionInfo(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh)
   }
   
   return getShInfo;
-}
+}*/
 
 /******************************************************************************
  * Get Section Index From Section Name
@@ -211,7 +220,7 @@ _Elf32_Shdr *getAllSectionInfo(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh)
  *          -1 (Not Matched)
  *
  ******************************************************************************/
-int getIndexOfSectionByName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, char *name){
+/*int getIndexOfSectionByName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, char *name){
   _Elf32_Shdr *getShIndexByName;
   int index;
   
@@ -224,7 +233,7 @@ int getIndexOfSectionByName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, ch
   }
   
   return -1;
-}
+}*/
 
 /******************************************************************************
  * Get Section Address From Section Index
@@ -240,12 +249,12 @@ int getIndexOfSectionByName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, ch
  *          secAddress
  *
  ******************************************************************************/
-int getSectionAddress(InStream *myFile, Elf32_Shdr *sh, int index){
+/*int getSectionAddress(ElfData *dataFromElf, int index){
   int secAddress;
-  secAddress = sh[index].sh_addr;
+  secAddress = dataFromElf->sh[index].sh_addr;
   
   return secAddress;
-}
+}*/
 
 /******************************************************************************
  * Get Section Size From Section Index
@@ -261,57 +270,46 @@ int getSectionAddress(InStream *myFile, Elf32_Shdr *sh, int index){
  *          sectionSize
  *
  ******************************************************************************/
-int getSectionSize(InStream *myFile, Elf32_Shdr *sh, int index){
+/*int getSectionSize(ElfData *dataFromElf, int index){
   int sectionSize;
-  sectionSize = sh[index].sh_size;
+  sectionSize = dataFromElf->sh[index].sh_size;
   
   return sectionSize;
 }
 
-uint32_t *getSectionData(InStream *myFile, Elf32_Shdr *sh, int index){
-  int *data = malloc(sh[index].sh_size);
-  
-  inStreamMoveFilePtr(myFile, sh[index].sh_offset);
-  fread(data, sh[index].sh_size, 1, myFile->file);
-
-  return data;
-}
-
-Elf32_Rel *getRelocation(InStream *myFile, Elf32_Shdr *sh){
+Elf32_Rel *getRelocation(ElfData *dataFromElf){
   int i, rel_Entries, sizeToMalloc;
   
-  for(i = 0; sh[i].sh_type != SHT_REL; i++);
-  rel_Entries = sh[i].sh_size / 8;
+  for(i = 0; dataFromElf->sh[i].sh_type != SHT_REL; i++);
+  rel_Entries = dataFromElf->sh[i].sh_size / 8;
   sizeToMalloc = rel_Entries * sizeof(Elf32_Rel);
   Elf32_Rel *getRel = malloc(sizeToMalloc);
   
-  inStreamMoveFilePtr(myFile, sh[i].sh_offset);
-  fread(getRel, sizeToMalloc, 1, myFile->file);
+  inStreamMoveFilePtr(dataFromElf->myFile, dataFromElf->sh[i].sh_offset);
+  fread(getRel, sizeToMalloc, 1, dataFromElf->myFile->file);
 
   return getRel;
 }
 
-char *getRelSymbolName(InStream *myFile, Elf32_Shdr *sh, Elf32_Rel *getRel, Elf32_Sym *st, int index){
+char *getRelSymbolName(ElfData *dataFromElf, int index){
   int symbolIndex, sectIndex;
 
-  symbolIndex = ELF32_R_SYM(getRel[index].r_info);
-  sectIndex = st[symbolIndex].st_shndx;
+  symbolIndex = ELF32_R_SYM(dataFromElf->rel[index].r_info);
+  sectIndex = dataFromElf->st[symbolIndex].st_shndx;
   
-  _Elf32_Shdr *getSectName = getSectionInfoNameUsingIndex(myFile, sh, sectIndex);
+  _Elf32_Shdr *getSectName = getSectionInfoNameUsingIndex(dataFromElf->myFile, dataFromElf->sh, sectIndex);
   
   return (char *)getSectName;
 }
 
-uint32_t getRelType(InStream *myFile, Elf32_Rel *getRel, int index){
+uint32_t getRelType(ElfData *dataFromElf, int index){
   int sectType;
   
-  sectType = ELF32_R_TYPE(getRel[index].r_info);
+  sectType = ELF32_R_TYPE(dataFromElf->rel[index].r_info);
   
   return sectType;
 }
-
-
-
+*/
 
 
 
