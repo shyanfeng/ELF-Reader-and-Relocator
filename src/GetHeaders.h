@@ -28,18 +28,18 @@ Elf32_Ehdr *getElfHeader(ElfData *dataFromElf);
 Elf32_Phdr *getProgramHeaders(ElfData *dataFromElf);
 
 // Section Header
-Elf32_Shdr *getSectionHeaders(InStream *myFile, Elf32_Ehdr *eh);
+Elf32_Shdr *getSectionHeaders(ElfData *dataFromElf);
 
 // Symbol Table
-Elf32_Sym *getSymbolTables(InStream *myFile, Elf32_Ehdr *eh, Elf32_Shdr *sh);
+Elf32_Sym *getSymbolTables(ElfData *dataFromElf);
 
 // Section and Name
-_Elf32_Shdr *getSectionInfoNameUsingIndex(InStream *myFile, Elf32_Shdr *sh, int index);
-_Elf32_Shdr *getSectionInfoUsingIndex(InStream *myFile, Elf32_Shdr *sh, int index);
-_Elf32_Shdr *getAllSectionInfo(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh);
+_Elf32_Shdr *getSectionInfoNameUsingIndex(ElfData *dataFromElf, int index);
+_Elf32_Shdr *getSectionInfoUsingIndex(ElfData *dataFromElf, int index);
+_Elf32_Shdr *getAllSectionInfo(ElfData *dataFromElf);
 
 
-int getIndexOfSectionByName(InStream *myFile, Elf32_Shdr *sh, Elf32_Ehdr *eh, char *name);
+int getIndexOfSectionByName(ElfData *dataFromElf, char *name);
 int getSectionAddress(ElfData *dataFromElf, int index);
 int getSectionSize(ElfData *dataFromElf, int index);
 // uint32_t *getSectionData(InStream *myFile, Elf32_Shdr *sh, int index);
