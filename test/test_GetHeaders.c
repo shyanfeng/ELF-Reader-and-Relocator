@@ -59,42 +59,42 @@ void test_getElfHeader(void){
  *                          Program Header
  *
  ******************************************************************/
-/*void test_GetProgramHeaders(void){
+void test_GetProgramHeaders(void){
   InStream *myFile;
   
-  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  Elf32_Ehdr *eh = getElfHeader(myFile);
-  Elf32_Phdr *ph = getProgramHeaders(myFile, eh);
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->ph = getProgramHeaders(dataFromElf);
   
-  TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[0].p_type);
-  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_vaddr);
-  TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_paddr);
-  TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_filesz);
-  TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_memsz);
-  TEST_ASSERT_EQUAL_HEX32(PF_RWX, ph[0].p_flags);
-  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_align);
+  TEST_ASSERT_EQUAL_HEX32(PT_LOAD, dataFromElf->ph[0].p_type);
+  // TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_offset);
+  // TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_vaddr);
+  // TEST_ASSERT_EQUAL_HEX32(0x08000000, ph[0].p_paddr);
+  // TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_filesz);
+  // TEST_ASSERT_EQUAL_HEX32(0x0000106c, ph[0].p_memsz);
+  // TEST_ASSERT_EQUAL_HEX32(PF_RWX, ph[0].p_flags);
+  // TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[0].p_align);
 
-  TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[1].p_type);
-  TEST_ASSERT_EQUAL_HEX32(0x00010000, ph[1].p_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x20000000, ph[1].p_vaddr);
-  TEST_ASSERT_EQUAL_HEX32(0x0800106c, ph[1].p_paddr);
-  TEST_ASSERT_EQUAL_HEX32(0x00000440, ph[1].p_filesz);
-  TEST_ASSERT_EQUAL_HEX32(0x00000440, ph[1].p_memsz);
-  TEST_ASSERT_EQUAL_HEX32(PF_RW, ph[1].p_flags);
-  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[1].p_align);
+  // TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[1].p_type);
+  // TEST_ASSERT_EQUAL_HEX32(0x00010000, ph[1].p_offset);
+  // TEST_ASSERT_EQUAL_HEX32(0x20000000, ph[1].p_vaddr);
+  // TEST_ASSERT_EQUAL_HEX32(0x0800106c, ph[1].p_paddr);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000440, ph[1].p_filesz);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000440, ph[1].p_memsz);
+  // TEST_ASSERT_EQUAL_HEX32(PF_RW, ph[1].p_flags);
+  // TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[1].p_align);
   
-  TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[2].p_type);
-  TEST_ASSERT_EQUAL_HEX32(0x00010440, ph[2].p_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x20000440, ph[2].p_vaddr);
-  TEST_ASSERT_EQUAL_HEX32(0x20000440, ph[2].p_paddr);
-  TEST_ASSERT_EQUAL_HEX32(0x00000000, ph[2].p_filesz);
-  TEST_ASSERT_EQUAL_HEX32(0x00000648, ph[2].p_memsz);
-  TEST_ASSERT_EQUAL_HEX32(PF_RW, ph[2].p_flags);
-  TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[2].p_align);
+  // TEST_ASSERT_EQUAL_HEX32(PT_LOAD, ph[2].p_type);
+  // TEST_ASSERT_EQUAL_HEX32(0x00010440, ph[2].p_offset);
+  // TEST_ASSERT_EQUAL_HEX32(0x20000440, ph[2].p_vaddr);
+  // TEST_ASSERT_EQUAL_HEX32(0x20000440, ph[2].p_paddr);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000000, ph[2].p_filesz);
+  // TEST_ASSERT_EQUAL_HEX32(0x00000648, ph[2].p_memsz);
+  // TEST_ASSERT_EQUAL_HEX32(PF_RW, ph[2].p_flags);
+  // TEST_ASSERT_EQUAL_HEX32(0x00008000, ph[2].p_align);
   
-  closeFileInTxt(myFile);
-}*/
+  closeFileInTxt(dataFromElf->myFile);
+}
 
 /******************************************************************
  *

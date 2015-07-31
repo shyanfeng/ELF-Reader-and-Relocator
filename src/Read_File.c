@@ -29,7 +29,7 @@ void *closeFileInTxt(InStream *fileDirectory){
 /*********************************************
  *    Try out fread
  *********************************************/
-char *readFileInTxt(InStream *getByte, char *buffer){
+/*char *readFileInTxt(InStream *getByte, char *buffer){
   
   fread((buffer), sizeof(buffer), 1, getByte->file);
   // printf("%x\n", sizeof(buffer));
@@ -102,7 +102,7 @@ uint32_t byteSelection(InStream *getByte, int inputByte){
   
   return returnBits;
 }
-
+*/
 uint32_t inStreamMoveFilePtr(InStream *getFile, long int offset){
   int startPos;
   
@@ -115,7 +115,7 @@ uint32_t inStreamMoveFilePtr(InStream *getFile, long int offset){
   }
   
 }
-
+/*
 uint32_t movCurrent(InStream *getFile, long int posStart){
   int currentPos;
   
@@ -151,4 +151,4 @@ uint32_t posPtr(InStream *getFile){
   return ptrPosition;
 
 }
-
+*/

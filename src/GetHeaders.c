@@ -54,15 +54,15 @@ Elf32_Ehdr *getElfHeader(ElfData *dataFromElf){
  *          (The structure of Elf32_Phdr with information of the Program Header)
  *
  ******************************************************************************/
-/*Elf32_Phdr *getProgramHeaders(InStream *myFile, Elf32_Ehdr *eh){
-  int phSizeToMalloc = sizeof(Elf32_Phdr) * (eh->e_phnum);
-  Elf32_Phdr *ph = malloc(phSizeToMalloc);
+Elf32_Phdr *getProgramHeaders(ElfData *dataFromElf){
+  int phSizeToMalloc = sizeof(Elf32_Phdr) * (dataFromElf->eh->e_phnum);
+  dataFromElf->ph = malloc(phSizeToMalloc);
 
-  inStreamMoveFilePtr(myFile, eh->e_phoff);
-  fread(ph, phSizeToMalloc, 1, myFile->file);
+  inStreamMoveFilePtr(dataFromElf->myFile, dataFromElf->eh->e_phoff);
+  fread(dataFromElf->ph, phSizeToMalloc, 1, dataFromElf->myFile->file);
   
-  return ph;
-}*/
+  return dataFromElf->ph;
+}
 
 /******************************************************************************
  * Section Header

@@ -28,7 +28,7 @@ void test_open_file_not_exist_should_throw_error(void){
   }
   
 }
-
+/*
 void test_read_file_in_txt(void){
   InStream *myFile;
   char getRead[100];
@@ -354,7 +354,7 @@ void test_seek_file(void){
 
 
 
-
+*/
 
 
 

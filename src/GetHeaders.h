@@ -12,6 +12,7 @@ typedef struct {
   InStream *myFile;
   Elf32_Ehdr *eh;
   Elf32_Shdr *sh;
+  Elf32_Phdr *ph;
   _Elf32_Shdr *programElf;
   Elf32_Sym *st;
   Elf32_Rel *rel;
@@ -24,7 +25,7 @@ void initElfData();
 Elf32_Ehdr *getElfHeader(ElfData *dataFromElf);
 
 // Program Header
-Elf32_Phdr *getProgramHeaders(InStream *myFile, Elf32_Ehdr *eh);
+Elf32_Phdr *getProgramHeaders(ElfData *dataFromElf);
 
 // Section Header
 Elf32_Shdr *getSectionHeaders(InStream *myFile, Elf32_Ehdr *eh);
