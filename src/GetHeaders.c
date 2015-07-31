@@ -278,6 +278,29 @@ int getSectionSize(ElfData *dataFromElf, int index){
   return sectionSize;
 }
 
+// get physical address 
+uint32_t getSectionPhysicalAddress(ElfData *dataFromElf, int index){
+  uint32_t phyAddr;
+  
+  phyAddr = dataFromElf->ph[index].p_paddr;
+  
+  return phyAddr;
+}
+
+// get virtual address 
+uint32_t getSectionVirtualAddress(ElfData *dataFromElf, int index){
+  uint32_t virAddr;
+  
+  virAddr = dataFromElf->ph[index].p_vaddr;
+  
+  return virAddr;
+}
+
+
+// int isSectionExecutable(ElfData *dataFromElf, int index){
+  // if(dataFromElf->ph[0].p_flags )
+// }
+
 
 Elf32_Rel *getRelocation(ElfData *dataFromElf){
   int i, rel_Entries, sizeToMalloc;

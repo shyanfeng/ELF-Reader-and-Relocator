@@ -42,7 +42,11 @@ _Elf32_Shdr *getAllSectionInfo(ElfData *dataFromElf);
 int getIndexOfSectionByName(ElfData *dataFromElf, char *name);
 int getSectionAddress(ElfData *dataFromElf, int index);
 int getSectionSize(ElfData *dataFromElf, int index);
-// uint32_t *getSectionData(InStream *myFile, Elf32_Shdr *sh, int index);
+
+uint32_t getSectionPhysicalAddress(ElfData *dataFromElf, int index);
+uint32_t getSectionVirtualAddress(ElfData *dataFromElf, int index);
+
+int isSectionExecutable(ElfData *dataFromElf, int index);
 
 Elf32_Rel *getRelocation(ElfData *dataFromElf);
 char *getRelSymbolName(ElfData *dataFromElf, int index);

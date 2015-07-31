@@ -346,6 +346,32 @@ void test_getSectionSize_with_index_1(void){
   TEST_ASSERT_EQUAL(428, getSectionSize(dataFromElf, 1));
 }
 
+/*******************************************************************
+ *
+ *                      Get physical address by index
+ *
+ *******************************************************************/
+void test_getSectionPhysicalAddress_with_index_1(void){
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->ph = getProgramHeaders(dataFromElf);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x0800106c, getSectionPhysicalAddress(dataFromElf, 1));
+}
+
+/*******************************************************************
+ *
+ *                      Get virtual address by index
+ *
+ *******************************************************************/
+void test_getSectionVirtualAddress_with_index_1(void){
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->ph = getProgramHeaders(dataFromElf);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x20000000, getSectionVirtualAddress(dataFromElf, 1));
+}
+
 // get Relocate offset n info
 void test_getRelocation(void){
   dataFromElf->myFile = openFile("test/Relocation_File/add.o", "rb+");
