@@ -344,6 +344,8 @@ void test_getSectionSize_with_index_1(void){
   dataFromElf->sh = getSectionHeaders(dataFromElf);
   
   TEST_ASSERT_EQUAL(428, getSectionSize(dataFromElf, 1));
+  
+  closeFileInTxt(dataFromElf->myFile);
 }
 
 /*******************************************************************
@@ -357,6 +359,8 @@ void test_getSectionPhysicalAddress_with_index_1(void){
   dataFromElf->ph = getProgramHeaders(dataFromElf);
   
   TEST_ASSERT_EQUAL_HEX32(0x0800106c, getSectionPhysicalAddress(dataFromElf, 1));
+  
+  closeFileInTxt(dataFromElf->myFile);
 }
 
 /*******************************************************************
@@ -370,9 +374,125 @@ void test_getSectionVirtualAddress_with_index_1(void){
   dataFromElf->ph = getProgramHeaders(dataFromElf);
   
   TEST_ASSERT_EQUAL_HEX32(0x20000000, getSectionVirtualAddress(dataFromElf, 1));
+  
+  closeFileInTxt(dataFromElf->myFile);
 }
 
-// get Relocate offset n info
+/*******************************************************************
+ *
+ *               Check Section Available fo Executable
+ *
+ *******************************************************************/
+void test_isSectionExecutable_should_return_0(void){
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->ph = getProgramHeaders(dataFromElf);
+  
+  TEST_ASSERT_EQUAL_HEX32(0, isSectionExecutable(dataFromElf, 1));
+  
+  closeFileInTxt(dataFromElf->myFile);
+}
+
+void test_isSectionExecutable_should_return_1(void){
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->ph = getProgramHeaders(dataFromElf);
+  
+  TEST_ASSERT_EQUAL_HEX32(1, isSectionExecutable(dataFromElf, 0));
+  
+  closeFileInTxt(dataFromElf->myFile);
+}
+
+/*******************************************************************
+ *
+ *               Check Section Available fo Writeable
+ *
+ *******************************************************************/
+void test_isSectionWriteable_should_return_1(void){
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->ph = getProgramHeaders(dataFromElf);
+  
+  TEST_ASSERT_EQUAL_HEX32(1, isSectionWriteable(dataFromElf, 2));
+  
+  closeFileInTxt(dataFromElf->myFile);
+}
+
+/*******************************************************************
+ *
+ *               Check Section Available fo Readable
+ *
+ *******************************************************************/
+void test_isSectionReadable_should_return_1(void){
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->ph = getProgramHeaders(dataFromElf);
+  
+  TEST_ASSERT_EQUAL_HEX32(1, isSectionReadable(dataFromElf, 2));
+  
+  closeFileInTxt(dataFromElf->myFile);
+}
+
+/*******************************************************************
+ *
+ *                  Get Symbol Table Size From Name
+ *
+ *******************************************************************/
+void test_getSymbolTableSizeUsingName_with_name_LoopCopyDataInit_should_return_size(void){
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->sh = getSectionHeaders(dataFromElf);
+  dataFromElf->st = getSymbolTables(dataFromElf);
+  
+  TEST_ASSERT_EQUAL(0, getSymbolTableSizeUsingName(dataFromElf, "LoopCopyDataInit"));
+}
+
+void test_getSymbolTableSizeUsingName_with_name_HAL_GPIO_DeInit_should_return_size(void){
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->sh = getSectionHeaders(dataFromElf);
+  dataFromElf->st = getSymbolTables(dataFromElf);
+  
+  TEST_ASSERT_EQUAL(532, getSymbolTableSizeUsingName(dataFromElf, "HAL_GPIO_DeInit"));
+}
+
+void test_getSymbolTableSizeUsingName_with_invalid_name_should_return_negative_1(void){
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->sh = getSectionHeaders(dataFromElf);
+  dataFromElf->st = getSymbolTables(dataFromElf);
+  
+  TEST_ASSERT_EQUAL(-1, getSymbolTableSizeUsingName(dataFromElf, "Invalid_name"));
+}
+
+/*******************************************************************
+ *
+ *                  Get Symbol Table Address From Name
+ *
+ *******************************************************************/
+void test_getSymbolTableAddressUsingName_with_currentTime_should_return_address(void){
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->sh = getSectionHeaders(dataFromElf);
+  dataFromElf->st = getSymbolTables(dataFromElf);
+  
+  TEST_ASSERT_EQUAL_HEX32(0x2000045c, getSymbolTableAddressUsingName(dataFromElf, "currentTime"));
+}
+
+void test_getSymbolTableAddressUsingName_with_invalid_name_should_return_negative_1(void){
+  dataFromElf->myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  dataFromElf->eh = getElfHeader(dataFromElf);
+  dataFromElf->sh = getSectionHeaders(dataFromElf);
+  dataFromElf->st = getSymbolTables(dataFromElf);
+  
+  TEST_ASSERT_EQUAL_HEX32(-1, getSymbolTableAddressUsingName(dataFromElf, "Invalid_name"));
+}
+
+/*******************************************************************
+ *
+ *                  Info and Offset of Relocation
+ *
+ *******************************************************************/
 void test_getRelocation(void){
   dataFromElf->myFile = openFile("test/Relocation_File/add.o", "rb+");
   dataFromElf->eh = getElfHeader(dataFromElf);
@@ -396,7 +516,8 @@ void test_getRelocation(void){
   
   TEST_ASSERT_EQUAL_HEX32(0x0000002c, dataFromElf->rel[5].r_offset);
   TEST_ASSERT_EQUAL_HEX32(0x00000202, dataFromElf->rel[5].r_info);
-
+  
+  closeFileInTxt(dataFromElf->myFile);
 }
 
 // get Relocate symbol
@@ -409,6 +530,7 @@ void test_getRelSymbol_with_index_0(void){
   
   TEST_ASSERT_EQUAL_STRING(".debug_abbrev", getRelSymbolName(dataFromElf, 0));
   
+  closeFileInTxt(dataFromElf->myFile);
 }
 
 void test_getRelSymbol_with_index_3(void){
@@ -420,6 +542,7 @@ void test_getRelSymbol_with_index_3(void){
   
   TEST_ASSERT_EQUAL_STRING(".text", getRelSymbolName(dataFromElf, 3));
   
+  closeFileInTxt(dataFromElf->myFile);
 }
 
 // get Relocate type
@@ -430,6 +553,6 @@ void test_getRelType_with_index_1_should_return_R_ARM_ABS32(void){
   dataFromElf->rel = getRelocation(dataFromElf);
   
   TEST_ASSERT_EQUAL(R_ARM_ABS32, getRelType(dataFromElf, 1));
-
+  
+  closeFileInTxt(dataFromElf->myFile);
 }
-

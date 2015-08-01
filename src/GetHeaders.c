@@ -18,6 +18,9 @@ void initElfData(){
  *
  *  Operation:
  *          To read the information in the ELF Header
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
  *  
  *  Data:
  *          Information of the ELF Header allocate in the structure 
@@ -36,14 +39,15 @@ Elf32_Ehdr *getElfHeader(ElfData *dataFromElf){
   return dataFromElf->eh;
 }
 
-
-
 /******************************************************************************
  * Program Header
  *
  *  Operation:
- *          To read the information in the Program Header with moving the file
- *          pointer with the e_phoff(Program_Header_Offset) in the Elf32_Ehdr
+ *          To read the information in the Program Header by moving the file
+ *          pointer to the e_phoff(Program_Header_Offset) in the Elf32_Ehdr
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
  *  
  *  Data:
  *          Information of the Program Header allocate in the structure 
@@ -68,9 +72,11 @@ Elf32_Phdr *getProgramHeaders(ElfData *dataFromElf){
  * Section Header
  *
  *  Operation:
- *          To read the information in the Section Header with moving the file
- *          pointer with the e_shoff(Section_Header_Offset) in the Elf32_Ehdr
+ *          To read the information in the Section Header by moving the file
+ *          pointer to the e_shoff(Section_Header_Offset) in the Elf32_Ehdr
  *  
+ *  Input:
+ *          dataFromElf(ElfData structure)
  *  Data:
  *          Information of the Section Header allocate in the structure 
  *          of Elf32_Shdr
@@ -91,11 +97,14 @@ Elf32_Shdr *getSectionHeaders(ElfData *dataFromElf){
 }
 
 /******************************************************************************
- * Symbol Table
+ * Symbol Tables
  *
  *  Operation:
- *          To read the information in the Symbol Table with moving the file
- *          pointer with the sh_offset(Symbol_Table_Offset) in the Elf32_Shdr
+ *          To read the information in the Symbol Table by moving the file
+ *          pointer to the sh_offset(Symbol_Table_Offset) in the Elf32_Shdr
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
  *  
  *  Data:
  *          Information of the Symbol Table allocate in the structure 
@@ -107,28 +116,31 @@ Elf32_Shdr *getSectionHeaders(ElfData *dataFromElf){
  *
  ******************************************************************************/
 Elf32_Sym *getSymbolTables(ElfData *dataFromElf){
-  int i, totalSymTabByte, entriesOfSymTab;
+  int i, totalSymTab, entriesOfSymTab;
   int stSizeToMalloc;
   
   for(i = 0; dataFromElf->sh[i].sh_type != SHT_SYMTAB; i++);
-  totalSymTabByte = dataFromElf->sh[i+1].sh_offset - dataFromElf->sh[i].sh_offset;
-  dataFromElf->st = malloc(totalSymTabByte);
+  totalSymTab = dataFromElf->sh[i+1].sh_offset - dataFromElf->sh[i].sh_offset;
+  dataFromElf->st = malloc(totalSymTab);
   
   inStreamMoveFilePtr(dataFromElf->myFile, dataFromElf->sh[i].sh_offset);
-  fread(dataFromElf->st, totalSymTabByte, 1, dataFromElf->myFile->file);
+  fread(dataFromElf->st, totalSymTab, 1, dataFromElf->myFile->file);
   
   return dataFromElf->st;
-  
 }
 
 /******************************************************************************
  * Get Section Info Name Using Index
  *
  *  Operation:
- *          To read the information of name in the section header with moving 
- *          the file pointer with the sh_offset(Symbol_Table_Offset) of String 
+ *          To read the information of name in the section header by moving 
+ *          the file pointer to the sh_offset(Symbol_Table_Offset) of String 
  *          Table add with sh[index].sh_name in the Elf32_Shdr. Index is the  
- *          index for Section Header.
+ *          index for Section Header
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          index(Section index)
  *  
  *  Data:
  *          Information of the Section Name allocate with the size of String 
@@ -138,7 +150,7 @@ Elf32_Sym *getSymbolTables(ElfData *dataFromElf){
  *          names
  *
  ******************************************************************************/
-_Elf32_Shdr *getSectionInfoNameUsingIndex(ElfData *dataFromElf, int index){
+char *getSectionInfoNameUsingIndex(ElfData *dataFromElf, int index){
   char *names;
   int i;
   
@@ -148,32 +160,36 @@ _Elf32_Shdr *getSectionInfoNameUsingIndex(ElfData *dataFromElf, int index){
   inStreamMoveFilePtr(dataFromElf->myFile, dataFromElf->sh[i].sh_offset + dataFromElf->sh[index].sh_name);
   fread(names, dataFromElf->sh[i].sh_size, 1, dataFromElf->myFile->file);
   
-  return (_Elf32_Shdr*)names;
+  return names;
 }
 
 /******************************************************************************
  * Get Section Info Using Index
  *
  *  Operation:
- *          To read the information of section in the section header with moving
- *          the file pointer with the sh[index].sh_offset(Symbol_Table_Offset)  
- *          in the Elf32_Shdr. Index is the index for Section Header.
- *  
+ *          To read the information of section in the section header by moving
+ *          the file pointer to the sh[index].sh_offset(Symbol_Table_Offset)  
+ *          in the Elf32_Shdr. Index is the index for Section Header
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          index(Section index)
+ *
  *  Data:
  *          Information of the Section allocate with the size of String 
  *          Table type in the Section Header
  *
  *  Return:
- *          sect
+ *          sectInfo
  *
  ******************************************************************************/
-_Elf32_Shdr *getSectionInfoUsingIndex(ElfData *dataFromElf, int index){
-  uint8_t *sect = malloc(dataFromElf->sh[index].sh_size);
+uint32_t *getSectionInfoUsingIndex(ElfData *dataFromElf, int index){
+  uint32_t *sectInfo = malloc(dataFromElf->sh[index].sh_size);
   
   inStreamMoveFilePtr(dataFromElf->myFile, dataFromElf->sh[index].sh_offset);
-  fread(sect, dataFromElf->sh[index].sh_size, 1, dataFromElf->myFile->file);
+  fread(sectInfo, dataFromElf->sh[index].sh_size, 1, dataFromElf->myFile->file);
 
-  return (_Elf32_Shdr*)sect;
+  return sectInfo;
 }
 
 /******************************************************************************
@@ -183,6 +199,9 @@ _Elf32_Shdr *getSectionInfoUsingIndex(ElfData *dataFromElf, int index){
  *          To read the information of section and name in the section header 
  *          with the two function created which are getSectionInfoUsingIndex
  *          and getSectionInfoNameUsingIndex.
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
  *  
  *  Data:
  *          Information of the Section allocate with the size of _Elf32_Shdr 
@@ -210,6 +229,9 @@ _Elf32_Shdr *getAllSectionInfo(ElfData *dataFromElf){
  *
  *  Operation:
  *          To get the index of section in section header from the section name
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
  *  
  *  Data:
  *          The index of section
@@ -237,8 +259,12 @@ int getIndexOfSectionByName(ElfData *dataFromElf, char *name){
  * Get Section Address From Section Index
  *
  *  Operation:
- *          To get the address of section in section header from the section 
- *          index
+ *          To get the address of section in function getAllSectionInfo from  
+ *          the section index
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          index(Section index)
  *  
  *  Data:
  *          The address of section
@@ -263,6 +289,10 @@ int getSectionAddress(ElfData *dataFromElf, int index){
  *  Operation:
  *          To get the size of section in section header from the section 
  *          index
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          index(Section index)
  *  
  *  Data:
  *          The size of section
@@ -278,7 +308,24 @@ int getSectionSize(ElfData *dataFromElf, int index){
   return sectionSize;
 }
 
-// get physical address 
+/******************************************************************************
+ * Get Physical Address From Program Header Index
+ *
+ *  Operation:
+ *          To get the physical address in program header from the program 
+ *          header index
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          index(Section index)
+ *  
+ *  Data:
+ *          The physical address
+ *
+ *  Return:
+ *          phyAddr
+ *
+ ******************************************************************************/
 uint32_t getSectionPhysicalAddress(ElfData *dataFromElf, int index){
   uint32_t phyAddr;
   
@@ -287,7 +334,24 @@ uint32_t getSectionPhysicalAddress(ElfData *dataFromElf, int index){
   return phyAddr;
 }
 
-// get virtual address 
+/******************************************************************************
+ * Get Virtual Address From Program Header Index
+ *
+ *  Operation:
+ *          To get the virtual address in program header from the program 
+ *          header index
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          index(Section index)
+ *  
+ *  Data:
+ *          The virtual address
+ *
+ *  Return:
+ *          virAddr
+ *
+ ******************************************************************************/
 uint32_t getSectionVirtualAddress(ElfData *dataFromElf, int index){
   uint32_t virAddr;
   
@@ -296,12 +360,177 @@ uint32_t getSectionVirtualAddress(ElfData *dataFromElf, int index){
   return virAddr;
 }
 
+/******************************************************************************
+ * Section Executable Check
+ *
+ *  Operation:
+ *          To check the program header available for executable from flag
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          index(Program Header index)
+ *
+ *  Return:
+ *          1(Available)
+ *          0(Not Available)
+ *
+ ******************************************************************************/
+int isSectionExecutable(ElfData *dataFromElf, int index){
+  int flag;
+  flag = dataFromElf->ph[index].p_flags;
+  
+  if((flag & PF_X) == 1){
+    return 1;
+  }else{
+    return 0;
+  }
+}
 
-// int isSectionExecutable(ElfData *dataFromElf, int index){
-  // if(dataFromElf->ph[0].p_flags )
-// }
+/******************************************************************************
+ * Section Writeable Check
+ *
+ *  Operation:
+ *          To check the program header available for writeable from flag
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          index(Program Header index)
+ *
+ *  Return:
+ *          1(Available)
+ *          0(Not Available)
+ *
+ ******************************************************************************/
+int isSectionWriteable(ElfData *dataFromElf, int index){
+  int flag;
+  flag = dataFromElf->ph[index].p_flags;
+  
+  if((flag & PF_W) == 2){
+    return 1;
+  }else{
+    return 0;
+  }
+}
 
+/******************************************************************************
+ * Section Readable Check
+ *
+ *  Operation:
+ *          To check the program header available for readable from flag
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          index(Program Header index)
+ *
+ *  Return:
+ *          1(Available)
+ *          0(Not Available)
+ *
+ ******************************************************************************/
+int isSectionReadable(ElfData *dataFromElf, int index){
+  int flag;
+  flag = dataFromElf->ph[index].p_flags;
+  
+  if((flag & PF_R) == 4){
+    return 1;
+  }else{
+    return 0;
+  }
+}
 
+/******************************************************************************
+ * Get Symbol Table Size From Name
+ *
+ *  Operation:
+ *          To get symbol table size by moving the pointer to sh[i].sh_offset 
+ *          plus st[j].st_name
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          name(Symbol Table name)
+ *  
+ *  Data:
+ *          The size of symbol table
+ *
+ *  Return:
+ *          st[j].st_size(Matched)
+ *          -1(Not matched)
+ *
+ ******************************************************************************/
+uint32_t getSymbolTableSizeUsingName(ElfData *dataFromElf, char *name){
+  char *SectNames;
+  int i, j;
+  
+  for(i = 0; i < dataFromElf->eh->e_shnum - 1; i++);
+  SectNames = malloc(dataFromElf->sh[i].sh_size);
+
+  for(j = 0; j < 290; j++){
+    inStreamMoveFilePtr(dataFromElf->myFile, dataFromElf->sh[i].sh_offset + dataFromElf->st[j].st_name);
+    fread(SectNames, dataFromElf->sh[i].sh_size, 1, dataFromElf->myFile->file);
+    if(strcmp(SectNames , name) == 0){
+      return dataFromElf->st[j].st_size;
+    }
+  }
+  
+  return -1;
+}
+
+/******************************************************************************
+ * Get Symbol Table Address From Name
+ *
+ *  Operation:
+ *          To get symbol table address by moving the pointer to sh[i].sh_offset 
+ *          plus st[j].st_name
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          name(Symbol Table name)
+ *  
+ *  Data:
+ *          The address of symbol table
+ *
+ *  Return:
+ *          st[j].st_value(Matched)
+ *          -1(Not matched)
+ *
+ ******************************************************************************/
+uint32_t getSymbolTableAddressUsingName(ElfData *dataFromElf, char *name){
+  char *SectNames;
+  int i, j;
+  
+  for(i = 0; i < dataFromElf->eh->e_shnum - 1; i++);
+  SectNames = malloc(dataFromElf->sh[i].sh_size);
+
+  for(j = 0; j < 290; j++){
+    inStreamMoveFilePtr(dataFromElf->myFile, dataFromElf->sh[i].sh_offset + dataFromElf->st[j].st_name);
+    fread(SectNames, dataFromElf->sh[i].sh_size, 1, dataFromElf->myFile->file);
+    if(strcmp(SectNames , name) == 0){
+      return dataFromElf->st[j].st_value;
+    }
+  }
+  
+  return -1;
+}
+
+/******************************************************************************
+ * Relocation
+ *
+ *  Operation:
+ *          To read the information in the Relocation by moving the file
+ *          pointer to the sh_offset(Relocation_Offset) in the Elf32_Shdr
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *  
+ *  Data:
+ *          Information of the Relation allocate in the structure 
+ *          of Elf32_Sym
+ *
+ *  Return:
+ *          rel
+ *          (The structure of Elf32_Rel)
+ *
+ ******************************************************************************/
 Elf32_Rel *getRelocation(ElfData *dataFromElf){
   int i, rel_Entries, sizeToMalloc;
   
@@ -316,17 +545,53 @@ Elf32_Rel *getRelocation(ElfData *dataFromElf){
   return dataFromElf->rel;
 }
 
+/******************************************************************************
+ * Get Relocation Symbol Name
+ *
+ *  Operation:
+ *          To get the symbol name in the Relocation 
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          index(Relocation index)
+ *  
+ *  Data:
+ *          Symbol name of relocation
+ *
+ *  Return:
+ *          dataFromElf->programElf
+ *          (symbol name)
+ *
+ ******************************************************************************/
 char *getRelSymbolName(ElfData *dataFromElf, int index){
   int symbolIndex, sectIndex;
 
   symbolIndex = ELF32_R_SYM(dataFromElf->rel[index].r_info);
   sectIndex = dataFromElf->st[symbolIndex].st_shndx;
   
-  dataFromElf->programElf = getSectionInfoNameUsingIndex(dataFromElf, sectIndex);
+  dataFromElf->programElf = (_Elf32_Shdr *)getSectionInfoNameUsingIndex(dataFromElf, sectIndex);
   
   return (char *)dataFromElf->programElf;
 }
 
+/******************************************************************************
+ * Get Relocation Type
+ *
+ *  Operation:
+ *          To get the type in the Relocation 
+ *
+ *  Input:
+ *          dataFromElf(ElfData structure)
+ *          index(Relocation index)
+ *  
+ *  Data:
+ *          Type of relocation
+ *
+ *  Return:
+ *          sectType
+ *          (relocation type)
+ *
+ ******************************************************************************/
 uint32_t getRelType(ElfData *dataFromElf, int index){
   int sectType;
   
@@ -334,7 +599,5 @@ uint32_t getRelType(ElfData *dataFromElf, int index){
   
   return sectType;
 }
-
-
 
 

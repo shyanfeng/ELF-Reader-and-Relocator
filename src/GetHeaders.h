@@ -33,21 +33,30 @@ Elf32_Shdr *getSectionHeaders(ElfData *dataFromElf);
 // Symbol Table
 Elf32_Sym *getSymbolTables(ElfData *dataFromElf);
 
-// Section and Name
-_Elf32_Shdr *getSectionInfoNameUsingIndex(ElfData *dataFromElf, int index);
-_Elf32_Shdr *getSectionInfoUsingIndex(ElfData *dataFromElf, int index);
+// Section info and Name
+char *getSectionInfoNameUsingIndex(ElfData *dataFromElf, int index);
+uint32_t *getSectionInfoUsingIndex(ElfData *dataFromElf, int index);
 _Elf32_Shdr *getAllSectionInfo(ElfData *dataFromElf);
 
-
+//  Index, Address and Size of section
 int getIndexOfSectionByName(ElfData *dataFromElf, char *name);
 int getSectionAddress(ElfData *dataFromElf, int index);
 int getSectionSize(ElfData *dataFromElf, int index);
 
+//  Physical and Virtual Address of Program Headers
 uint32_t getSectionPhysicalAddress(ElfData *dataFromElf, int index);
 uint32_t getSectionVirtualAddress(ElfData *dataFromElf, int index);
 
+//  Status check for Executable, Writeable and Readable
 int isSectionExecutable(ElfData *dataFromElf, int index);
+int isSectionWriteable(ElfData *dataFromElf, int index);
+int isSectionReadable(ElfData *dataFromElf, int index);
 
+//  Symbol Table Size and Address from Name
+uint32_t getSymbolTableSizeUsingName(ElfData *dataFromElf, char *name);
+uint32_t getSymbolTableAddressUsingName(ElfData *dataFromElf, char *name);
+
+//  Relocation
 Elf32_Rel *getRelocation(ElfData *dataFromElf);
 char *getRelSymbolName(ElfData *dataFromElf, int index);
 uint32_t getRelType(ElfData *dataFromElf, int index);
