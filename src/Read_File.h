@@ -32,9 +32,7 @@ uint32_t twoByte(InStream *getByte);
 uint32_t fourByte(InStream *getByte);
 uint32_t byteSelection(InStream *getByte, int inputByte);
 
-uint32_t inStreamMoveFilePtr(InStream *getFile, long int offset);
-uint32_t movCurrent(InStream *getFile, long int posStart);
-uint32_t movEnd(InStream *getFile, long int posEnd);
-uint32_t posPtr(InStream *getFile);
+uint32_t inStreamMoveFilePtr(InStream *myFile, long int offset);
+uint32_t posPtr(InStream *myFile);
 
 #endif // Read_File_H

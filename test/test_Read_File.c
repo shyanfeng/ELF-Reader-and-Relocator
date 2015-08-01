@@ -7,6 +7,11 @@ void setUp(void){}
 
 void tearDown(void){}
 
+/*******************************************************************
+ *
+ *                      To open the file
+ *
+ *******************************************************************/
 void test_open_exist_file(void){
   InStream *myFile;
   
@@ -28,24 +33,31 @@ void test_open_file_not_exist_should_throw_error(void){
   }
   
 }
-/*
-void test_read_file_in_txt(void){
-  InStream *myFile;
-  char getRead[100];
 
-  myFile = openFile("test/Data/SecondTry.txt", "rb");
-  
-  readFileInTxt(myFile, getRead);
-  // printf("Return string : %s\n", &(getRead));
+/*******************************************************************
+ *
+ *                    Move the file pointer
+ *
+ *******************************************************************/
+void test_inStreamMoveFilePtr(void){
+  InStream *myFile;
+  long int startPosition;
+  long int endPosition;
+  int ptrPosition;
+  uint32_t getRead;
+
+  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
+  startPosition = inStreamMoveFilePtr(myFile, 33216);
+
+  TEST_ASSERT_EQUAL(0, startPosition);
   
   closeFileInTxt(myFile);
-  
 }
 
-
+/*
 void test_read_bit_byteIndex_3(void){
   InStream *myFile;
-  int getRead;
+  uint32_t getRead;
   
   myFile->byteIndex = 3;
   myFile->bitIndex = 0;
@@ -231,7 +243,6 @@ void test_byteSelection_with_invalid_byte_should_throw_error(void){
   
 }
 
-
 void test_binary_with_1_byte(void){
   InStream *myFile;
   uint32_t getRead;
@@ -243,7 +254,6 @@ void test_binary_with_1_byte(void){
   
   closeFileInTxt(myFile);
 }
-
 
 void test_byteSelection_2_with_elf_file(void){
   InStream *myFile;
@@ -284,77 +294,13 @@ void test_byteSelection_2_line_with_elf_file(void){
   getRead = byteSelection(myFile, 4);
   getRead = byteSelection(myFile, 4);
   
-  // while(feof(myFile->file) != 1){
-    // getRead = byteSelection(myFile, 1);
-  // }
-  
-  // TEST_ASSERT_EQUAL(0x464c457f, getRead);
-  // TEST_ASSERT_EQUAL(0x00010101, getRead);
-  // TEST_ASSERT_EQUAL(0x00000000, getRead);
-  // TEST_ASSERT_EQUAL(0x00000000, getRead);
-  // TEST_ASSERT_EQUAL(0x00280002, getRead);
-  // TEST_ASSERT_EQUAL(0x00000001, getRead);
-  // TEST_ASSERT_EQUAL(0x08000fed, getRead);
-  
   TEST_ASSERT_EQUAL(0x00000034, getRead);
   
   closeFileInTxt(myFile);
-}
-
-void test_mov_start_elf_file(void){
-  InStream *myFile;
-  long int startPosition;
-  long int endPosition;
-  int ptrPosition;
-  uint32_t getRead;
-
-  myFile = openFile("test/ELF_File/Test01.elf", "rb+");
-  startPosition = inStreamMoveFilePtr(myFile, 33216);
-  getRead = byteSelection(myFile, 4);
-  // printf("startPosition : %d, read = %x\n", startPosition, getRead);
-  
-  getRead = byteSelection(myFile, 4);
-  // printf("read = %x\n", getRead);
-  
-  getRead = byteSelection(myFile, 4);
-  // printf("read = %x\n", getRead);
-  
-  getRead = byteSelection(myFile, 4);
-  // printf("read = %x\n", getRead);
-  
-  endPosition = moveEnd(myFile->file, -54014);
-  getRead = byteSelection(myFile, 1);
-  // printf("position: %d, getRead: %x\n", endPosition, getRead);	
-  TEST_ASSERT_EQUAL(0, endPosition);
-  
-  closeFileInTxt(myFile);
-}
-
-void test_seek_file(void){
-  InStream *myFile;
-  int pos;
-  char ret;
-  long int currentPosition;
-  long int endPosition;
-  uint32_t getRead;
-
-  myFile = openFile("test/Data/Message.txt", "rb+");
-  pos = moveStart(myFile->file, 8);
-  currentPosition = ftell(myFile->file);
-  getRead = byteSelection(myFile, 1);
-  // printf("ptr : %d", currentPosition);
-  TEST_ASSERT_EQUAL(0, pos);
-  
-  pos = moveEnd(myFile->file, -1);
-  TEST_ASSERT_EQUAL(0, pos);
-  
-  closeFileInTxt(myFile);
-}
+}*/
 
 
 
-
-*/
 
 
 

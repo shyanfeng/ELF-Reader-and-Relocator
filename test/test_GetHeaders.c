@@ -462,7 +462,7 @@ void test_getSymbolTableSizeUsingName_with_invalid_name_should_return_negative_1
   dataFromElf->sh = getSectionHeaders(dataFromElf);
   dataFromElf->st = getSymbolTables(dataFromElf);
   
-  TEST_ASSERT_EQUAL(-1, getSymbolTableSizeUsingName(dataFromElf, "Invalid_name"));
+  TEST_ASSERT_EQUAL_HEX32(-1, getSymbolTableSizeUsingName(dataFromElf, "Invalid_name"));
 }
 
 /*******************************************************************

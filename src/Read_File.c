@@ -4,7 +4,20 @@
 #include "CException.h"
 #include "ErrorCode.h"
 
-
+/******************************************************************************
+ * File Open
+ *
+ *  Operation:
+ *          To open the file
+ *
+ *  Input:
+ *          fileDirectory(directory of the file)
+ *          mode(mode to open the file)
+ *
+ *  Return:
+ *          myFile
+ *
+ ******************************************************************************/
 InStream *openFile(char *fileDirectory, char *mode){
   InStream *myFile = (InStream *)malloc(sizeof(InStream));
   
@@ -19,24 +32,74 @@ InStream *openFile(char *fileDirectory, char *mode){
   myFile->bitIndex = 8;
 
   return myFile;
-
 }
 
-void *closeFileInTxt(InStream *fileDirectory){
-  fclose(fileDirectory->file);
-  free(fileDirectory);
+/******************************************************************************
+ * File Close
+ *
+ *  Operation:
+ *          To close the file
+ *
+ *  Input:
+ *          fileDirectory(directory of the file)
+ *
+ *  Return:
+ *          none
+ *
+ ******************************************************************************/
+void *closeFileInTxt(InStream *myFile){
+  fclose(myFile->file);
+  free(myFile);
 }
-/*********************************************
- *    Try out fread
- *********************************************/
-/*char *readFileInTxt(InStream *getByte, char *buffer){
+
+/******************************************************************************
+ * InStream Move File Pointer
+ *
+ *  Operation:
+ *          To move the file pointer
+ *
+ *  Input:
+ *          myFile(directory of the file)
+ *          offset(offset to pointing at)
+ *
+ *  Return:
+ *          startPos(0 is valid)
+ *          Throw(ERR_RANGE_OFFSET)(1 is not valid)
+ *
+ ******************************************************************************/
+uint32_t inStreamMoveFilePtr(InStream *myFile, long int offset){
+  int startPos;
   
-  fread((buffer), sizeof(buffer), 1, getByte->file);
-  // printf("%x\n", sizeof(buffer));
-
-  return buffer;
+  startPos = fseek(myFile->file, offset, SEEK_SET);
+  
+  if(startPos == 1){
+    Throw(ERR_RANGE_OFFSET);
+  }else{
+    return startPos;
+  }
 }
 
+/******************************************************************************
+ * Position File Pointer
+ *
+ *  Operation:
+ *          To display the current position file pointer
+ *
+ *  Input:
+ *          myFile(directory of the file)
+ *
+ *  Return:
+ *          ptrPosition
+ *
+ ******************************************************************************/
+uint32_t posPtr(InStream *myFile){
+  long int ptrPosition;
+  
+  ptrPosition = ftell(myFile->file);
+  return ptrPosition;
+}
+
+/*
 uint32_t readBit(InStream *getBit){
   int returnBit = 0;
   int mask = 1;
@@ -101,54 +164,7 @@ uint32_t byteSelection(InStream *getByte, int inputByte){
   }
   
   return returnBits;
-}
-*/
-uint32_t inStreamMoveFilePtr(InStream *getFile, long int offset){
-  int startPos;
-  
-  startPos = fseek(getFile->file, offset, SEEK_SET);
-  
-  if(startPos == 1){
-    Throw(ERR_RANGE_OFFSET);
-  }else{
-    return startPos;
-  }
-  
-}
-/*
-uint32_t movCurrent(InStream *getFile, long int posStart){
-  int currentPos;
-  
-  currentPos = fseek(getFile->file, posStart, SEEK_CUR);
-  
-  if(currentPos == 1){
-    Throw(ERR_RANGE_OFFSET);
-  }else{
-    return currentPos;
-  }
-  
-}
+}*/
 
-uint32_t movEnd(InStream *getFile, long int posEnd){
-  int endPos;
-  long int ptrPosition;
-  
-  endPos = fseek(getFile->file, posEnd, SEEK_END);
-  
-  if(endPos == 1){
-    Throw(ERR_RANGE_OFFSET);
-  }else{
-    return endPos;
-  }
-  
-}
 
-uint32_t posPtr(InStream *getFile){
-  long int ptrPosition;
-  
-  ptrPosition = ftell(getFile->file);
-  printf("%x\n", ptrPosition);
-  return ptrPosition;
 
-}
-*/
