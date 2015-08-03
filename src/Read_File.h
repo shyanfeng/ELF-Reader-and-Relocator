@@ -2,7 +2,7 @@
 #define Read_File_H
 
 #include <stdio.h>
-#include "unity.h"
+// #include "unity.h"
 
 #include "elf.h"
 
@@ -23,15 +23,15 @@ struct InStream{
 
 InStream *openFile(char *fileDirectory, char *mode);
 void *closeFileInTxt(InStream *fileDirectory);
+/*
 char *readFileInTxt(InStream *getByte, char *buffer);
-
 uint32_t readBit(InStream *getBit);
 uint32_t readBits(InStream *getBit, int bitSize);
 uint32_t oneByte(InStream *getByte);
 uint32_t twoByte(InStream *getByte);
 uint32_t fourByte(InStream *getByte);
 uint32_t byteSelection(InStream *getByte, int inputByte);
-
+*/
 uint32_t inStreamMoveFilePtr(InStream *myFile, long int offset);
 uint32_t posPtr(InStream *myFile);
 

@@ -4,12 +4,12 @@
 #include "elf.h"
 #include <stdio.h>
 #include <malloc.h>
-#include "CException.h"
+// #include "CException.h"
 #include "ErrorCode.h"
 
-ElfData *dataFromElf;
 
 void initElfData(){
+ElfData *dataFromElf;
   dataFromElf = malloc(sizeof(ElfData));
 }
 
@@ -220,6 +220,7 @@ _Elf32_Shdr *getAllSectionInfo(ElfData *dataFromElf){
     dataFromElf->programElf[i].section = (char *)getSectionInfoUsingIndex(dataFromElf, i);
     dataFromElf->programElf[i].name = (char *)getSectionInfoNameUsingIndex(dataFromElf, i);
   }
+    free(dataFromElf->programElf);
   
   return dataFromElf->programElf;
 }

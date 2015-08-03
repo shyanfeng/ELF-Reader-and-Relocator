@@ -2,7 +2,7 @@
 #define Get_File_Header_H
 
 #include <stdio.h>
-#include "unity.h"
+// #include "unity.h"
 
 #include "Read_File.h"
 #include "elf.h"
@@ -18,7 +18,7 @@ typedef struct {
   Elf32_Rel *rel;
 } ElfData;
 
-extern ElfData *dataFromElf;
+// extern ElfData *dataFromElf;
 void initElfData();
 
 // File Header
