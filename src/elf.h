@@ -1601,6 +1601,8 @@ typedef Elf32_Addr Elf32_Conflict;
 /* Keep this the last entry.  */
 #define R_ARM_NUM		256
 
+#define R_ARM_THM_CALL  10
+
 // __END_DECLS
 
 #endif	/* elf.h */

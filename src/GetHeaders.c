@@ -7,12 +7,6 @@
 // #include "CException.h"
 #include "ErrorCode.h"
 
-
-void initElfData(){
-ElfData *dataFromElf;
-  dataFromElf = malloc(sizeof(ElfData));
-}
-
 /******************************************************************************
  * ELF Header
  *
@@ -188,7 +182,6 @@ uint32_t *getSectionInfoUsingIndex(ElfData *dataFromElf, int index){
   
   inStreamMoveFilePtr(dataFromElf->myFile, dataFromElf->sh[index].sh_offset);
   fread(sectInfo, dataFromElf->sh[index].sh_size, 1, dataFromElf->myFile->file);
-
   return sectInfo;
 }
 
@@ -511,94 +504,6 @@ uint32_t getSymbolTableAddressUsingName(ElfData *dataFromElf, char *name){
   }
   
   return -1;
-}
-
-/******************************************************************************
- * Relocation
- *
- *  Operation:
- *          To read the information in the Relocation by moving the file
- *          pointer to the sh_offset(Relocation_Offset) in the Elf32_Shdr
- *
- *  Input:
- *          dataFromElf(ElfData structure)
- *  
- *  Data:
- *          Information of the Relation allocate in the structure 
- *          of Elf32_Sym
- *
- *  Return:
- *          rel
- *          (The structure of Elf32_Rel)
- *
- ******************************************************************************/
-Elf32_Rel *getRelocation(ElfData *dataFromElf){
-  int i, rel_Entries, sizeToMalloc;
-  
-  for(i = 0; dataFromElf->sh[i].sh_type != SHT_REL; i++);
-  rel_Entries = dataFromElf->sh[i].sh_size / 8;
-  sizeToMalloc = rel_Entries * sizeof(Elf32_Rel);
-  dataFromElf->rel = malloc(sizeToMalloc);
-  
-  inStreamMoveFilePtr(dataFromElf->myFile, dataFromElf->sh[i].sh_offset);
-  fread(dataFromElf->rel, sizeToMalloc, 1, dataFromElf->myFile->file);
-
-  return dataFromElf->rel;
-}
-
-/******************************************************************************
- * Get Relocation Symbol Name
- *
- *  Operation:
- *          To get the symbol name in the Relocation 
- *
- *  Input:
- *          dataFromElf(ElfData structure)
- *          index(Relocation index)
- *  
- *  Data:
- *          Symbol name of relocation
- *
- *  Return:
- *          dataFromElf->programElf
- *          (symbol name)
- *
- ******************************************************************************/
-char *getRelSymbolName(ElfData *dataFromElf, int index){
-  int symbolIndex, sectIndex;
-
-  symbolIndex = ELF32_R_SYM(dataFromElf->rel[index].r_info);
-  sectIndex = dataFromElf->st[symbolIndex].st_shndx;
-  
-  dataFromElf->programElf = (_Elf32_Shdr *)getSectionInfoNameUsingIndex(dataFromElf, sectIndex);
-  
-  return (char *)dataFromElf->programElf;
-}
-
-/******************************************************************************
- * Get Relocation Type
- *
- *  Operation:
- *          To get the type in the Relocation 
- *
- *  Input:
- *          dataFromElf(ElfData structure)
- *          index(Relocation index)
- *  
- *  Data:
- *          Type of relocation
- *
- *  Return:
- *          sectType
- *          (relocation type)
- *
- ******************************************************************************/
-uint32_t getRelType(ElfData *dataFromElf, int index){
-  int sectType;
-  
-  sectType = ELF32_R_TYPE(dataFromElf->rel[index].r_info);
-  
-  return sectType;
 }
 
 

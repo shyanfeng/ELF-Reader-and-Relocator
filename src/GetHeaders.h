@@ -2,7 +2,6 @@
 #define Get_File_Header_H
 
 #include <stdio.h>
-// #include "unity.h"
 
 #include "Read_File.h"
 #include "elf.h"
@@ -18,7 +17,6 @@ typedef struct {
   Elf32_Rel *rel;
 } ElfData;
 
-// extern ElfData *dataFromElf;
 void initElfData();
 
 // File Header
@@ -55,11 +53,6 @@ int isSectionReadable(ElfData *dataFromElf, int index);
 //  Symbol Table Size and Address from Name
 uint32_t getSymbolTableSizeUsingName(ElfData *dataFromElf, char *name);
 uint32_t getSymbolTableAddressUsingName(ElfData *dataFromElf, char *name);
-
-//  Relocation
-Elf32_Rel *getRelocation(ElfData *dataFromElf);
-char *getRelSymbolName(ElfData *dataFromElf, int index);
-uint32_t getRelType(ElfData *dataFromElf, int index);
 
 #endif // Get_File_Header_H
 
