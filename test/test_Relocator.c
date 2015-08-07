@@ -17,73 +17,54 @@ void tearDown(void){}
  *
  *******************************************************************/
 void test_getRelocation(void){
-  ElfData dataFromElf;
-  dataFromElf.myFile = openFile("test/Relocation_File/add.o", "rb+");
-  dataFromElf.eh = getElfHeader(&dataFromElf);
-  dataFromElf.sh = getSectionHeaders(&dataFromElf);
-  dataFromElf.rel = getRelocation(&dataFromElf);
+  ElfData *elfData = openElfFile("test/Relocation_File/add.o");
+  elfData->rel = getRelocation(elfData);
   
-  TEST_ASSERT_EQUAL_HEX32(0x00000006, dataFromElf.rel[0].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000702, dataFromElf.rel[0].r_info);
+  TEST_ASSERT_EQUAL_HEX32(0x0000002c, elfData->rel[0].r_offset);
+  TEST_ASSERT_EQUAL_HEX32(0x0000110a, elfData->rel[0].r_info);
   
-  TEST_ASSERT_EQUAL_HEX32(0x0000000c, dataFromElf.rel[1].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000a02, dataFromElf.rel[1].r_info);
-  
-  TEST_ASSERT_EQUAL_HEX32(0x00000011, dataFromElf.rel[2].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000a02, dataFromElf.rel[2].r_info);
-  
-  TEST_ASSERT_EQUAL_HEX32(0x00000015, dataFromElf.rel[3].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000202, dataFromElf.rel[3].r_info);
-  
-  TEST_ASSERT_EQUAL_HEX32(0x0000001d, dataFromElf.rel[4].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000902, dataFromElf.rel[4].r_info);
-  
-  TEST_ASSERT_EQUAL_HEX32(0x0000002c, dataFromElf.rel[5].r_offset);
-  TEST_ASSERT_EQUAL_HEX32(0x00000202, dataFromElf.rel[5].r_info);
-  
-  closeFileInTxt(dataFromElf.myFile);
+  closeFileInTxt(elfData->myFile);
 }
 
+/*
 // get Relocate symbol
 void test_getRelSymbol_with_index_0(void){
-  ElfData dataFromElf;
-  dataFromElf.myFile = openFile("test/Relocation_File/add.o", "rb+");
-  dataFromElf.eh = getElfHeader(&dataFromElf);
-  dataFromElf.sh = getSectionHeaders(&dataFromElf);
-  dataFromElf.rel = getRelocation(&dataFromElf);
-  dataFromElf.st = getSymbolTables(&dataFromElf);
+  ElfData *elfData = openElfFile("test/Relocation_File/add.o");
+  elfData->rel = getRelocation(elfData);
   
-  TEST_ASSERT_EQUAL_STRING(".debug_abbrev", getRelSymbolName(&dataFromElf, 0));
+  TEST_ASSERT_EQUAL_STRING("minus", getRelSymbolName(elfData, 0));
   
-  closeFileInTxt(dataFromElf.myFile);
+  closeFileInTxt(elfData->myFile);
 }
 
 void test_getRelSymbol_with_index_3(void){
-  ElfData dataFromElf;
-  dataFromElf.myFile = openFile("test/Relocation_File/add.o", "rb+");
-  dataFromElf.eh = getElfHeader(&dataFromElf);
-  dataFromElf.sh = getSectionHeaders(&dataFromElf);
-  dataFromElf.rel = getRelocation(&dataFromElf);
-  dataFromElf.st = getSymbolTables(&dataFromElf);
+  ElfData *elfData = openElfFile("test/Relocation_File/add.o");
+  elfData->rel = getRelocation(elfData);
   
-  TEST_ASSERT_EQUAL_STRING(".text", getRelSymbolName(&dataFromElf, 3));
+  TEST_ASSERT_EQUAL_STRING(".text", getRelSymbolName(elfData, 3));
   
-  closeFileInTxt(dataFromElf.myFile);
+  closeFileInTxt(elfData->myFile);
 }
-
+*/
 // get Relocate type
 void test_getRelType_with_index_1_should_return_R_ARM_ABS32(void){
-  ElfData dataFromElf;
-  dataFromElf.myFile = openFile("test/Relocation_File/add.o", "rb+");
-  dataFromElf.eh = getElfHeader(&dataFromElf);
-  dataFromElf.sh = getSectionHeaders(&dataFromElf);
-  dataFromElf.rel = getRelocation(&dataFromElf);
+  ElfData *elfData = openElfFile("test/Relocation_File/add.o");
+  elfData->rel = getRelocation(elfData);
   
-  TEST_ASSERT_EQUAL(R_ARM_ABS32, getRelType(&dataFromElf, 1));
+  TEST_ASSERT_EQUAL(R_ARM_THM_CALL, getRelType(elfData, 0));
   
-  closeFileInTxt(dataFromElf.myFile);
+  closeFileInTxt(elfData->myFile);
 }
 
+void test_generateBLInstruction(void){
+  ElfData *elfData = openElfFile("test/Relocation_File/main.o");
+  elfData->rel = getRelocation(elfData);
+  
+  uint32_t *blInstruction = generateBLInstruction(elfData, ".text");
+  TEST_ASSERT_EQUAL_HEX32(0xf7fffffe, blInstruction[0]);
+}
+
+/*
 void test_generateBLInstruction_with_bl(void){
   ElfData dataFromElf;
   dataFromElf.myFile = openFile("test/Relocation_File/main.o", "rb+");
@@ -95,8 +76,8 @@ void test_generateBLInstruction_with_bl(void){
   TEST_ASSERT_EQUAL_HEX32(0xf7fffffe, blInstruction[0]);
   
   closeFileInTxt(dataFromElf.myFile);
-}
-
+}*/
+/*
 void test_extractBlArguments_from_bl(void){
   ElfData dataFromElf;
   dataFromElf.myFile = openFile("test/Relocation_File/main.o", "rb+");
@@ -112,6 +93,9 @@ void test_extractBlArguments_from_bl(void){
   
   closeFileInTxt(dataFromElf.myFile);
 }
+*/
 
 
+ 
+ 
 

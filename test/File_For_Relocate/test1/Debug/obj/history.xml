@@ -1,11 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <history>
-   <processor signature="arm-none-eabi-gcc 4.8.1 mingw32 -mcpu=cortex-m4 -mthumb -g2 -Wall -O0 -c -DSTM32F429ZI -I..\..\..\..\..\..\..\CoIDE\workspace\test1\app -I..\..\..\..\..\..\..\CoIDE\workspace\test1 -I..\..\..\..\..\..\..\CoIDE\workspace">
-      <target file="add.o" lastModified="14ebeffb2a3">
-         <source file="..\..\..\app\add.c" lastModified="14ebefef6ee"/>
+   <processor signature="arm-none-eabi-gcc 4.8.1 mingw32 -mcpu=cortex-m4 -mthumb -g2 -Wall -O0 -c -DSTM32F429ZI -I..\..\..\..\..\..\..\Desktop\File_For_Relocate\app -I..\..\..\..\..\..\..\Desktop\File_For_Relocate -I..\..\..\..\..\..\..\Desktop">
+      <target file="minus.o" lastModified="14f07e8913d">
+         <source file="..\..\..\app\minus.c" lastModified="14f07e31e49"/>
       </target>
-      <target file="main.o" lastModified="14ebeffb283">
-         <source file="..\..\..\app\main.c" lastModified="14ebefface9"/>
+      <target file="add.o" lastModified="14f07e89119">
+         <source file="..\..\..\app\add.c" lastModified="14f07e8090c"/>
+      </target>
+      <target file="main.o" lastModified="14f07e890f4">
+         <source file="..\..\..\app\main.c" lastModified="14f05a075c0"/>
       </target>
    </processor>
 </history>

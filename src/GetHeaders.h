@@ -15,9 +15,11 @@ typedef struct {
   _Elf32_Shdr *programElf;
   Elf32_Sym *st;
   Elf32_Rel *rel;
+  uint32_t *sectionAddress;
+  uint32_t *targetAddr;
 } ElfData;
 
-void initElfData();
+ElfData *openElfFile(char *fileName);
 
 // File Header
 Elf32_Ehdr *getElfHeader(ElfData *dataFromElf);

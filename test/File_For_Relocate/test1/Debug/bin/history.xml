@@ -1,9 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <history>
    <processor signature="4.9.3 -mcpu=cortex-m4 -mthumb -g2 -Map=test1.map -O0 --gc-sections -LC:\Users\user1\AppData\Roaming\CooCox\CoIDE\configuration\ProgramData\test1 -TC:\Users\user1\AppData\Roaming\CooCox\CoIDE\configuration\ProgramData\test1/arm-gcc-link.ld -g">
-      <target file="test1.elf" lastModified="14ebeffb4a4">
-         <source file="..\obj\main.o" lastModified="14ebeffb283"/>
-         <source file="..\obj\add.o" lastModified="14ebeffb2a3"/>
+      <target file="test1.elf" lastModified="14f07e89325">
+         <source file="..\obj\minus.o" lastModified="14f07e8913d"/>
+         <source file="..\obj\main.o" lastModified="14f07e890f4"/>
+         <source file="..\obj\add.o" lastModified="14f07e89119"/>
       </target>
    </processor>
 </history>

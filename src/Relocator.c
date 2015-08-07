@@ -1,6 +1,6 @@
 #include "Relocator.h"
-#include "ProgramElf.h"
 #include "GetHeaders.h"
+#include "ProgramElf.h"
 #include "Read_File.h"
 #include "elf.h"
 #include <stdio.h>
@@ -98,19 +98,19 @@ uint32_t getRelType(ElfData *dataFromElf, int index){
 
 uint32_t *generateBLInstruction(ElfData *dataFromElf, char *secNameToRel){
   int indexToRel, i;
-  uint32_t *instructionOfBL = malloc(sizeof(uint32_t));
+  uint32_t *instructionOfBL;
   
   indexToRel = getIndexOfSectionByName(dataFromElf, secNameToRel);
-  
+  instructionOfBL = getSectionInfoUsingIndex(dataFromElf, indexToRel);
+  dataFromElf->sectionAddress = instructionOfBL;
+  // dataFromElf->targetAddr = 0x08000000;
   for(i = 0; getRelType(dataFromElf, i) != R_ARM_THM_CALL; i++);
-  inStreamMoveFilePtr(dataFromElf->myFile, dataFromElf->sh[indexToRel].sh_offset + dataFromElf->rel[i].r_offset);
-  
-  fread(instructionOfBL, sizeof(uint32_t), 1, dataFromElf->myFile->file);
+  instructionOfBL = (uint32_t *) (((char *)instructionOfBL) + dataFromElf->rel[i].r_offset);
   instructionOfBL[0] = (instructionOfBL[0] << 16) | (instructionOfBL[0] >> 16);
   
   return instructionOfBL;
 }
-
+/*
 uint32_t extractBlArguments(ElfData *dataFromElf, BlArguments *blArgs){
   int I1, I2;
   uint32_t addressToCall;
@@ -129,7 +129,7 @@ uint32_t extractBlArguments(ElfData *dataFromElf, BlArguments *blArgs){
   addressToCall = addressToCall & 0x01fffffe;
   
   return addressToCall;
-}
+}*/
 
 
 
