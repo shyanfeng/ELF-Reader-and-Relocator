@@ -269,7 +269,7 @@ int getIndexOfSectionByName(ElfData *elfData, char *name){
  *
  ******************************************************************************/
 uint32_t getSectionAddress(ElfData *elfData, int index){
-  int secAddress;
+  uint32_t secAddress;
  
   elfData->programElf = getAllSectionInfo(elfData); 
   
