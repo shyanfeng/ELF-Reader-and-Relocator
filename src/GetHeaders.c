@@ -268,12 +268,12 @@ int getIndexOfSectionByName(ElfData *elfData, char *name){
  *          secAddress
  *
  ******************************************************************************/
-int getSectionAddress(ElfData *elfData, int index){
+uint32_t getSectionAddress(ElfData *elfData, int index){
   int secAddress;
  
   elfData->programElf = getAllSectionInfo(elfData); 
   
-  secAddress = (int)elfData->programElf[index].section;
+  secAddress = (uint32_t)elfData->programElf[index].section;
   
   return secAddress;
 }
@@ -454,16 +454,19 @@ int isSectionReadable(ElfData *elfData, int index){
  ******************************************************************************/
 uint32_t getSymbolTableSizeUsingName(ElfData *elfData, char *name){
   char *SectNames;
-  int i, j;
+  int i, j, k, symTabEntries;
   
   for(i = 0; i < elfData->eh->e_shnum - 1; i++);
   SectNames = malloc(elfData->sh[i].sh_size);
-
-  for(j = 0; j < 290; j++){
-    inStreamMoveFilePtr(elfData->myFile, elfData->sh[i].sh_offset + elfData->st[j].st_name);
+  
+  for(j = 0; elfData->sh[j].sh_type != SHT_SYMTAB; j++);
+  symTabEntries = elfData->sh[j].sh_size / 4;
+  
+  for(k = 0; k < symTabEntries; k++){
+    inStreamMoveFilePtr(elfData->myFile, elfData->sh[i].sh_offset + elfData->st[k].st_name);
     fread(SectNames, elfData->sh[i].sh_size, 1, elfData->myFile->file);
     if(strcmp(SectNames , name) == 0){
-      return elfData->st[j].st_size;
+      return elfData->st[k].st_size;
     }
   }
   
@@ -491,20 +494,36 @@ uint32_t getSymbolTableSizeUsingName(ElfData *elfData, char *name){
  ******************************************************************************/
 uint32_t getSymbolTableAddressUsingName(ElfData *elfData, char *name){
   char *SectNames;
+  int i, j, k, symTabEntries;
+  
+  for(i = 0; i < elfData->eh->e_shnum - 1; i++);
+  SectNames = malloc(elfData->sh[i].sh_size);
+  
+  for(j = 0; elfData->sh[j].sh_type != SHT_SYMTAB; j++);
+  symTabEntries = elfData->sh[j].sh_size / 4;
+  
+  for(k = 0; k < symTabEntries; k++){
+    inStreamMoveFilePtr(elfData->myFile, elfData->sh[i].sh_offset + elfData->st[k].st_name);
+    fread(SectNames, elfData->sh[i].sh_size, 1, elfData->myFile->file);
+    if(strcmp(SectNames , name) == 0){
+        return elfData->st[k].st_value;
+    }
+  }
+  
+  return -1;
+}
+
+char *getSymbolTableNameUsingIndex(ElfData *elfData, int index){
+  char *SectNames;
   int i, j;
   
   for(i = 0; i < elfData->eh->e_shnum - 1; i++);
   SectNames = malloc(elfData->sh[i].sh_size);
 
-  for(j = 0; j < 290; j++){
-    inStreamMoveFilePtr(elfData->myFile, elfData->sh[i].sh_offset + elfData->st[j].st_name);
-    fread(SectNames, elfData->sh[i].sh_size, 1, elfData->myFile->file);
-    if(strcmp(SectNames , name) == 0){
-      return elfData->st[j].st_value;
-    }
-  }
+  inStreamMoveFilePtr(elfData->myFile, elfData->sh[i].sh_offset + elfData->st[index].st_name);
+  fread(SectNames, elfData->sh[i].sh_size, 1, elfData->myFile->file);
   
-  return -1;
+  return SectNames;
 }
 
 ElfData *openElfFile(char *fileName){

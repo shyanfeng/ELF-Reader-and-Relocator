@@ -16,7 +16,7 @@
  *          pointer to the sh_offset(Relocation_Offset) in the Elf32_Shdr
  *
  *  Input:
- *          dataFromElf(ElfData structure)
+ *          elfData(ElfData structure)
  *  
  *  Data:
  *          Information of the Relation allocate in the structure 
@@ -27,18 +27,18 @@
  *          (The structure of Elf32_Rel)
  *
  ******************************************************************************/
-Elf32_Rel *getRelocation(ElfData *dataFromElf){
+Elf32_Rel *getRelocation(ElfData *elfData){
   int i, rel_Entries, sizeToMalloc;
   
-  for(i = 0; dataFromElf->sh[i].sh_type != SHT_REL; i++);
-  rel_Entries = dataFromElf->sh[i].sh_size / 8;
+  for(i = 0; elfData->sh[i].sh_type != SHT_REL; i++);
+  rel_Entries = elfData->sh[i].sh_size / 8;
   sizeToMalloc = rel_Entries * sizeof(Elf32_Rel);
-  dataFromElf->rel = malloc(sizeToMalloc);
+  elfData->rel = malloc(sizeToMalloc);
   
-  inStreamMoveFilePtr(dataFromElf->myFile, dataFromElf->sh[i].sh_offset);
-  fread(dataFromElf->rel, sizeToMalloc, 1, dataFromElf->myFile->file);
+  inStreamMoveFilePtr(elfData->myFile, elfData->sh[i].sh_offset);
+  fread(elfData->rel, sizeToMalloc, 1, elfData->myFile->file);
 
-  return dataFromElf->rel;
+  return elfData->rel;
 }
 
 /******************************************************************************
@@ -48,26 +48,29 @@ Elf32_Rel *getRelocation(ElfData *dataFromElf){
  *          To get the symbol name in the Relocation 
  *
  *  Input:
- *          dataFromElf(ElfData structure)
+ *          elfData(ElfData structure)
  *          index(Relocation index)
  *  
  *  Data:
  *          Symbol name of relocation
  *
  *  Return:
- *          dataFromElf->programElf
+ *          elfData->programElf
  *          (symbol name)
  *
  ******************************************************************************/
-char *getRelSymbolName(ElfData *dataFromElf, int index){
+char *getRelSymbolName(ElfData *elfData, int index){
   int symbolIndex, sectIndex;
 
-  symbolIndex = ELF32_R_SYM(dataFromElf->rel[index].r_info);
-  sectIndex = dataFromElf->st[symbolIndex].st_shndx;
+  symbolIndex = ELF32_R_SYM(elfData->rel[index].r_info);
+  sectIndex = elfData->st[symbolIndex].st_shndx;
   
-  dataFromElf->programElf = (_Elf32_Shdr *)getSectionInfoNameUsingIndex(dataFromElf, sectIndex);
-  
-  return (char *)dataFromElf->programElf;
+  if(elfData->st[symbolIndex].st_shndx == 0){
+    elfData->programElf = (_Elf32_Shdr *)getSymbolTableNameUsingIndex(elfData, symbolIndex);
+  }else{
+    elfData->programElf = (_Elf32_Shdr *)getSectionInfoNameUsingIndex(elfData, sectIndex);
+  }
+  return (char *)elfData->programElf;
 }
 
 /******************************************************************************
@@ -77,7 +80,7 @@ char *getRelSymbolName(ElfData *dataFromElf, int index){
  *          To get the type in the Relocation 
  *
  *  Input:
- *          dataFromElf(ElfData structure)
+ *          elfData(ElfData structure)
  *          index(Relocation index)
  *  
  *  Data:
@@ -88,34 +91,34 @@ char *getRelSymbolName(ElfData *dataFromElf, int index){
  *          (relocation type)
  *
  ******************************************************************************/
-uint32_t getRelType(ElfData *dataFromElf, int index){
+uint32_t getRelType(ElfData *elfData, int index){
   int sectType;
   
-  sectType = ELF32_R_TYPE(dataFromElf->rel[index].r_info);
+  sectType = ELF32_R_TYPE(elfData->rel[index].r_info);
   
   return sectType;
 }
 
-uint32_t *generateBLInstruction(ElfData *dataFromElf, char *secNameToRel){
+uint32_t *generateBLInstruction(ElfData *elfData, char *secNameToRel){
   int indexToRel, i;
   uint32_t *instructionOfBL;
   
-  indexToRel = getIndexOfSectionByName(dataFromElf, secNameToRel);
-  instructionOfBL = getSectionInfoUsingIndex(dataFromElf, indexToRel);
-  dataFromElf->sectionAddress = instructionOfBL;
-  // dataFromElf->targetAddr = 0x08000000;
-  for(i = 0; getRelType(dataFromElf, i) != R_ARM_THM_CALL; i++);
-  instructionOfBL = (uint32_t *) (((char *)instructionOfBL) + dataFromElf->rel[i].r_offset);
+  indexToRel = getIndexOfSectionByName(elfData, secNameToRel);
+  instructionOfBL = (uint32_t *)elfData->programElf[indexToRel].section;
+  elfData->sectionAddress = instructionOfBL;
+  // elfData->targetAddr = 0x08000000;
+  for(i = 0; getRelType(elfData, i) != R_ARM_THM_CALL; i++);
+  instructionOfBL = (uint32_t *) (((char *)instructionOfBL) + elfData->rel[i].r_offset);
   instructionOfBL[0] = (instructionOfBL[0] << 16) | (instructionOfBL[0] >> 16);
-  
+
   return instructionOfBL;
 }
-/*
-uint32_t extractBlArguments(ElfData *dataFromElf, BlArguments *blArgs){
+
+uint32_t extractBlArguments(ElfData *elfData, BlArguments *blArgs){
   int I1, I2;
   uint32_t addressToCall;
-  uint32_t *generateBL = generateBLInstruction(dataFromElf, ".text");
-
+  uint32_t *generateBL = generateBLInstruction(elfData, ".text");
+  
   blArgs->S = (generateBL[0] & 0x04000000) >> 26;
   blArgs->imm10 = (generateBL[0] & 0x03ff0000) >> 16;
   blArgs->J1 = (generateBL[0] & 0x00002000) >> 13;
@@ -129,7 +132,7 @@ uint32_t extractBlArguments(ElfData *dataFromElf, BlArguments *blArgs){
   addressToCall = addressToCall & 0x01fffffe;
   
   return addressToCall;
-}*/
+}
 
 
 

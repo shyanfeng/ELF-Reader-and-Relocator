@@ -473,3 +473,15 @@ void test_getSymbolTableAddressUsingName_with_invalid_name_should_return_negativ
   closeFileInTxt(elfData->myFile);
 }
 
+/*******************************************************************
+ *
+ *                  Get Symbol Table Name Using Index
+ *
+ *******************************************************************/
+void test_getSymbolTableUsingIndex_with_index_289(void){
+  ElfData *elfData = openElfFile("test/ELF_File/Test01.elf");
+  
+  TEST_ASSERT_EQUAL_STRING("DMA1_Stream3_IRQHandler", getSymbolTableNameUsingIndex(elfData, 289));
+
+  closeFileInTxt(elfData->myFile);
+}

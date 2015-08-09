@@ -40,7 +40,7 @@ _Elf32_Shdr *getAllSectionInfo(ElfData *dataFromElf);
 
 //  Index, Address and Size of section
 int getIndexOfSectionByName(ElfData *dataFromElf, char *name);
-int getSectionAddress(ElfData *dataFromElf, int index);
+uint32_t getSectionAddress(ElfData *dataFromElf, int index);
 int getSectionSize(ElfData *dataFromElf, int index);
 
 //  Physical and Virtual Address of Program Headers
@@ -55,6 +55,8 @@ int isSectionReadable(ElfData *dataFromElf, int index);
 //  Symbol Table Size and Address from Name
 uint32_t getSymbolTableSizeUsingName(ElfData *dataFromElf, char *name);
 uint32_t getSymbolTableAddressUsingName(ElfData *dataFromElf, char *name);
+
+char *getSymbolTableNameUsingIndex(ElfData *elfData, int index);
 
 #endif // Get_File_Header_H
 
