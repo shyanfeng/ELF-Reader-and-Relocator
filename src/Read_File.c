@@ -1,7 +1,7 @@
 #include "Read_File.h"
 #include <stdio.h>
 #include <malloc.h>
-#include "CException.h"
+// #include "CException.h"
 #include "ErrorCode.h"
 
 /******************************************************************************
@@ -24,7 +24,8 @@ InStream *openFile(char *fileDirectory, char *mode){
   myFile->file = fopen(fileDirectory, mode);
   
   if(myFile->file == NULL){
-    Throw(ERR_FILE_NOT_EXIST);
+    // Throw(ERR_FILE_NOT_EXIST);
+    printf("File not exist");
   }
   
   myFile->filename = fileDirectory;
