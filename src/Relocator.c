@@ -5,7 +5,7 @@
 #include "elf.h"
 #include <stdio.h>
 #include <malloc.h>
-// #include "CException.h"
+#include "CException.h"
 #include "ErrorCode.h"
 
 /******************************************************************************
@@ -56,7 +56,7 @@ Elf32_Rel *getRelocation(ElfData *elfData){
  *
  *  Return:
  *          elfData->programElf
- *          (symbol name)
+ *          (relocation symbol name)
  *
  ******************************************************************************/
 char *getRelSymbolName(ElfData *elfData, int index){
@@ -70,6 +70,7 @@ char *getRelSymbolName(ElfData *elfData, int index){
   }else{
     elfData->programElf = (_Elf32_Shdr *)getSectionInfoNameUsingIndex(elfData, sectIndex);
   }
+  
   return (char *)elfData->programElf;
 }
 
@@ -87,18 +88,35 @@ char *getRelSymbolName(ElfData *elfData, int index){
  *          Type of relocation
  *
  *  Return:
- *          sectType
+ *          symType
  *          (relocation type)
  *
  ******************************************************************************/
 uint32_t getRelType(ElfData *elfData, int index){
-  int sectType;
+  int symType;
   
-  sectType = ELF32_R_TYPE(elfData->rel[index].r_info);
+  symType = ELF32_R_TYPE(elfData->rel[index].r_info);
   
-  return sectType;
+  return symType;
 }
 
+/******************************************************************************
+ * Generate BL Instruction
+ *
+ *  Operation:
+ *          To generate the BL instruction for relocation
+ *
+ *  Input:
+ *          elfData(ElfData structure)
+ *          secNameToRel(Section Name to Relocate)
+ *  
+ *  Data:
+ *          The instruction of BL
+ *
+ *  Return:
+ *          instructionOfBL
+ *
+ ******************************************************************************/
 uint32_t *generateBLInstruction(ElfData *elfData, char *secNameToRel){
   int indexToRel, i;
   uint32_t *instructionOfBL;
@@ -106,7 +124,7 @@ uint32_t *generateBLInstruction(ElfData *elfData, char *secNameToRel){
   indexToRel = getIndexOfSectionByName(elfData, secNameToRel);
   instructionOfBL = (uint32_t *)elfData->programElf[indexToRel].section;
   elfData->sectionAddress = instructionOfBL;
-  // elfData->targetAddr = 0x08000000;
+  
   for(i = 0; getRelType(elfData, i) != R_ARM_THM_CALL; i++);
   instructionOfBL = (uint32_t *) (((char *)instructionOfBL) + elfData->rel[i].r_offset);
   instructionOfBL[0] = (instructionOfBL[0] << 16) | (instructionOfBL[0] >> 16);
@@ -114,6 +132,25 @@ uint32_t *generateBLInstruction(ElfData *elfData, char *secNameToRel){
   return instructionOfBL;
 }
 
+/******************************************************************************
+ * Extract BL Arguments
+ *
+ *  Operation:
+ *          To extract the BL arguments to find out the value of S, imm10, J1,
+ *          J2, imm11. J1 and S are use to generate the value of I1. J2 and
+ *          S are use to generate I2. 
+ *
+ *  Input:
+ *          elfData(ElfData structure)
+ *          blArgs(BlArguments structure)
+ *  
+ *  Data:
+ *          S, imm10, J1, J2, imm11
+ *
+ *  Return:
+ *          addressToCall
+ *
+ ******************************************************************************/
 uint32_t extractBlArguments(ElfData *elfData, BlArguments *blArgs){
   int I1, I2;
   uint32_t addressToCall;
@@ -133,6 +170,63 @@ uint32_t extractBlArguments(ElfData *elfData, BlArguments *blArgs){
   
   return addressToCall;
 }
+
+/******************************************************************************
+ * Extract Function Address to link
+ *
+ *  Operation:
+ *          To extract the function address to link. elfData is the memory
+ *          contain the BL instruction that link to elfData2. The function
+ *          address to extract is from elfData2.
+ *
+ *  Input:
+ *          elfData(ElfData structure)
+ *          elfData2(ElfData structure)
+ *  
+ *  Data:
+ *          function address
+ *
+ *  Return:
+ *          funcAddr
+ *          (Address of the function in the section)
+ *
+ ******************************************************************************/
+uint32_t extractFunctionAddress(ElfData *elfData, ElfData *elfData2){
+  elfData->rel = getRelocation(elfData);
+  elfData2->rel = getRelocation(elfData2);
+  char *symName;
+  int i, j, symTabEntries, indexOfText;
+  uint32_t funcAddr;
+  
+  symName = getRelSymbolName(elfData, 0);
+  indexOfText = getIndexOfSectionByName(elfData2, ".text");
+  symTabEntries = getSymbolTableEntries(elfData);
+
+  for(j = 0; j < symTabEntries; j++){
+    if(strcmp(symName, getSymbolTableNameUsingIndex(elfData2, j)) == 0){
+      funcAddr = getSectionAddress(elfData2, indexOfText);
+      funcAddr = funcAddr + (elfData2->st[j].st_value - 1);
+    }
+  }
+  
+  return funcAddr;
+}
+
+void relocateAddress(ElfData *elfData, BlArguments *blArgs){
+  elfData->rel = getRelocation(elfData);
+  // elfData2->rel = getRelocation(elfData2);
+  uint32_t addressToCall;
+  // uint32_t funcAddr = extractFunctionAddress(elfData, elfData2);
+  addressToCall = extractBlArguments(elfData, blArgs);
+  
+  // uint32_t addrToLink = funcAddr - addressToCall;
+  // printf("funcAddr = %x\n", funcAddr);
+  // printf("addressToCall = %x\n", addressToCall);
+  // printf("addrToLink = %x\n", addrToLink);
+}
+
+
+
 
 
 

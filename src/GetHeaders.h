@@ -19,8 +19,6 @@ typedef struct {
   uint32_t *targetAddr;
 } ElfData;
 
-ElfData *openElfFile(char *fileName);
-
 // File Header
 Elf32_Ehdr *getElfHeader(ElfData *dataFromElf);
 
@@ -38,6 +36,9 @@ char *getSectionInfoNameUsingIndex(ElfData *dataFromElf, int index);
 uint32_t *getSectionInfoUsingIndex(ElfData *dataFromElf, int index);
 _Elf32_Shdr *getAllSectionInfo(ElfData *dataFromElf);
 
+// ElfData initialization with file directory
+ElfData *openElfFile(char *fileName);
+
 //  Index, Address and Size of section
 int getIndexOfSectionByName(ElfData *dataFromElf, char *name);
 uint32_t getSectionAddress(ElfData *dataFromElf, int index);
@@ -52,10 +53,14 @@ int isSectionExecutable(ElfData *dataFromElf, int index);
 int isSectionWriteable(ElfData *dataFromElf, int index);
 int isSectionReadable(ElfData *dataFromElf, int index);
 
+//  Entries of Symbol Table
+int getSymbolTableEntries(ElfData *elfData);
+
 //  Symbol Table Size and Address from Name
 uint32_t getSymbolTableSizeUsingName(ElfData *dataFromElf, char *name);
 uint32_t getSymbolTableAddressUsingName(ElfData *dataFromElf, char *name);
 
+//  Name of Symbol Table
 char *getSymbolTableNameUsingIndex(ElfData *elfData, int index);
 
 #endif // Get_File_Header_H

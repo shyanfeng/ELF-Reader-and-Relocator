@@ -18,8 +18,8 @@ void test_open_exist_file(void){
   myFile = openFile("test/Data/FirstTry.txt", "rb");
   
   TEST_ASSERT_NOT_NULL(myFile->file);
-  closeFileInTxt(myFile);
   
+  closeFileInTxt(myFile);
 }
 
 void test_open_file_not_exist_should_throw_error(void){
@@ -32,6 +32,7 @@ void test_open_file_not_exist_should_throw_error(void){
     TEST_ASSERT_EQUAL(ERR_FILE_NOT_EXIST, e);
   }
   
+  closeFileInTxt(myFile);
 }
 
 /*******************************************************************
