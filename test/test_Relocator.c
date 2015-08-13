@@ -74,18 +74,18 @@ void test_generateBLInstruction_with_bl(void){
  *                    Extracte BL Arguments
  *
  *******************************************************************/
-/*void test_extractBlArguments_from_bl(void){
+void test_extractBlArguments_from_bl(void){
   ElfData *elfData = openElfFile("test/Relocation_File/add.o");
   elfData->rel = getRelocation(elfData);
   
-  BlArguments *blArgs;
+  BlArguments blArgs;
   uint32_t addressToCall;
-  addressToCall = extractBlArguments(elfData, blArgs);
+  addressToCall = extractBlArguments(elfData, &blArgs);
   
   TEST_ASSERT_EQUAL_HEX32(0x01fffffc, addressToCall);
   
   closeFileInTxt(elfData->myFile);
-}*/
+}
 /*
 void test_extractFunctionAddress(void){
   ElfData *elfData = openElfFile("test/Relocation_File/add.o");
