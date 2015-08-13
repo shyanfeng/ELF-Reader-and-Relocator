@@ -59,7 +59,7 @@ void test_getRelType_with_index_1_should_return_R_ARM_ABS32(void){
  *                    Generate BL Instruction
  *
  *******************************************************************/
-/*void test_generateBLInstruction_with_bl(void){
+void test_generateBLInstruction_with_bl(void){
   ElfData *elfData = openElfFile("test/Relocation_File/add.o");
   elfData->rel = getRelocation(elfData);
   
@@ -67,7 +67,7 @@ void test_getRelType_with_index_1_should_return_R_ARM_ABS32(void){
   TEST_ASSERT_EQUAL_HEX32(0xf7fffffe, blInstruction[0]);
   
   closeFileInTxt(elfData->myFile);
-}*/
+}
 
 /*******************************************************************
  *
