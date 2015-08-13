@@ -191,7 +191,7 @@ uint32_t extractBlArguments(ElfData *elfData, BlArguments *blArgs){
  *          (Address of the function in the section)
  *
  ******************************************************************************/
-uint32_t extractFunctionAddress(ElfData *elfData, ElfData *elfData2){
+/*uint32_t extractFunctionAddress(ElfData *elfData, ElfData *elfData2){
   elfData->rel = getRelocation(elfData);
   elfData2->rel = getRelocation(elfData2);
   char *symName;
@@ -210,8 +210,8 @@ uint32_t extractFunctionAddress(ElfData *elfData, ElfData *elfData2){
   }
   
   return funcAddr;
-}
-
+}*/
+/*
 void relocateAddress(ElfData *elfData, BlArguments *blArgs){
   elfData->rel = getRelocation(elfData);
   // elfData2->rel = getRelocation(elfData2);
@@ -223,7 +223,7 @@ void relocateAddress(ElfData *elfData, BlArguments *blArgs){
   // printf("funcAddr = %x\n", funcAddr);
   // printf("addressToCall = %x\n", addressToCall);
   // printf("addrToLink = %x\n", addrToLink);
-}
+}*/
 
 
 
