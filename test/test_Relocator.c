@@ -86,7 +86,7 @@ void test_extractBlArguments_from_bl(void){
   
   closeFileInTxt(elfData->myFile);
 }
-
+/*
 void test_extractFunctionAddress(void){
   ElfData *elfData = openElfFile("test/Relocation_File/add.o");
   elfData->rel = getRelocation(elfData);
@@ -100,8 +100,8 @@ void test_extractFunctionAddress(void){
   
   closeFileInTxt(elfData->myFile);
   closeFileInTxt(elfData2->myFile);
-}
-
+}*/
+/*
  void test_relocateAddress(void){
   ElfData *elfData = openElfFile("test/Relocation_File/add.o");
   elfData->rel = getRelocation(elfData);
@@ -115,6 +115,6 @@ void test_extractFunctionAddress(void){
   
   closeFileInTxt(elfData->myFile);
   // closeFileInTxt(elfData2->myFile);
-}
+}*/
  
 
