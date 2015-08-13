@@ -12,7 +12,7 @@ void tearDown(void){}
  *                      To open the file
  *
  *******************************************************************/
-/*void test_open_exist_file(void){
+void test_open_exist_file(void){
   InStream *myFile;
   
   myFile = openFile("test/Data/FirstTry.txt", "rb");
@@ -33,7 +33,7 @@ void test_open_file_not_exist_should_throw_error(void){
   }
   
   closeFileInTxt(myFile);
-}*/
+}
 
 /*******************************************************************
  *
