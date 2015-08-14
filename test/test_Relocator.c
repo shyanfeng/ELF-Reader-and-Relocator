@@ -86,35 +86,36 @@ void test_extractBlArguments_from_bl(void){
   
   closeFileInTxt(elfData->myFile);
 }
-/*
-void test_extractFunctionAddress(void){
+
+
+ void test_relocateAddress(void){
   ElfData *elfData = openElfFile("test/Relocation_File/add.o");
   elfData->rel = getRelocation(elfData);
   
   ElfData *elfData2 = openElfFile("test/Relocation_File/minus.o");
   elfData2->rel = getRelocation(elfData2);
   
-  uint32_t functionAddress;
   
-  functionAddress = extractFunctionAddress(elfData, elfData2);
+  uint32_t relAddress = relocateAddress(elfData, elfData2);
   
-  closeFileInTxt(elfData->myFile);
+  TEST_ASSERT_EQUAL_HEX32(0x00000b80, relAddress);
+  
   closeFileInTxt(elfData2->myFile);
-}*/
-/*
- void test_relocateAddress(void){
+  closeFileInTxt(elfData->myFile);
+}
+ 
+void test_generateRelocateArguments(void){
   ElfData *elfData = openElfFile("test/Relocation_File/add.o");
   elfData->rel = getRelocation(elfData);
-  BlArguments *blArgs;
   
-  // ElfData *elfData2 = openElfFile("test/Relocation_File/minus.o");
-  // elfData2->rel = getRelocation(elfData2);
+  ElfData *elfData2 = openElfFile("test/Relocation_File/minus.o");
+  elfData2->rel = getRelocation(elfData2);
   
+  BlArguments blArgs;
+  uint32_t generateArgs = generateRelocateArguments(elfData, elfData2, &blArgs);
   
-  relocateAddress(elfData, blArgs);
-  
-  closeFileInTxt(elfData->myFile);
-  // closeFileInTxt(elfData2->myFile);
-}*/
+}
  
-
+ 
+ 
+ 

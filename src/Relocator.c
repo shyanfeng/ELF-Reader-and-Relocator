@@ -171,6 +171,20 @@ uint32_t extractBlArguments(ElfData *elfData, BlArguments *blArgs){
   return addressToCall;
 }
 
+uint32_t extractAddressNeedToRelocate(ElfData *elfData){
+  uint32_t addrNeedToRelocate, sectAddr;
+  int indexOfText;
+  
+  indexOfText = getIndexOfSectionByName(elfData, ".text");
+  
+  sectAddr = getSectionAddress(elfData, indexOfText);
+  addrNeedToRelocate = elfData->rel[0].r_offset;
+  
+  addrNeedToRelocate = (addrNeedToRelocate + sectAddr) + 4;
+  
+  return addrNeedToRelocate;
+}
+
 /******************************************************************************
  * Extract Function Address to link
  *
@@ -191,9 +205,7 @@ uint32_t extractBlArguments(ElfData *elfData, BlArguments *blArgs){
  *          (Address of the function in the section)
  *
  ******************************************************************************/
-/*uint32_t extractFunctionAddress(ElfData *elfData, ElfData *elfData2){
-  elfData->rel = getRelocation(elfData);
-  elfData2->rel = getRelocation(elfData2);
+uint32_t extractFunctionAddress(ElfData *elfData, ElfData *elfData2){
   char *symName;
   int i, j, symTabEntries, indexOfText;
   uint32_t funcAddr;
@@ -210,22 +222,38 @@ uint32_t extractBlArguments(ElfData *elfData, BlArguments *blArgs){
   }
   
   return funcAddr;
-}*/
-/*
-void relocateAddress(ElfData *elfData, BlArguments *blArgs){
-  elfData->rel = getRelocation(elfData);
-  // elfData2->rel = getRelocation(elfData2);
-  uint32_t addressToCall;
-  // uint32_t funcAddr = extractFunctionAddress(elfData, elfData2);
-  addressToCall = extractBlArguments(elfData, blArgs);
+}
+
+uint32_t relocateAddress(ElfData *elfData, ElfData *elfData2){
+  uint32_t addressToCall, funcAddr, addrToLink;
   
-  // uint32_t addrToLink = funcAddr - addressToCall;
-  // printf("funcAddr = %x\n", funcAddr);
-  // printf("addressToCall = %x\n", addressToCall);
-  // printf("addrToLink = %x\n", addrToLink);
-}*/
+  addressToCall = extractAddressNeedToRelocate(elfData);
+  funcAddr = extractFunctionAddress(elfData, elfData2);
+  
+  addrToLink = funcAddr - addressToCall;
+  
+  return addrToLink;
+}
 
+uint32_t generateRelocateArguments(ElfData *elfData, ElfData *elfData2, BlArguments *blArgs){
+  int I1, I2;
+  uint32_t addressToExtract;
+  uint32_t extractBL = relocateAddress(elfData, elfData2);
+  
+  blArgs->S = (extractBL & 0x01000000) >> 23;
+  // blArgs->imm10 = (extractBL & 0x03ff0000) >> 16;
+  // blArgs->J1 = (extractBL & 0x00002000) >> 13;
+  // blArgs->J2 = (extractBL & 0x00000800) >> 11;
+  // blArgs->imm11 = (extractBL & 0x000007ff);
+  printf("S = %d\n",  blArgs->S);
+  // I1 = ~(blArgs->J1 ^ blArgs->S) & 0x1;
+  // I2 = ~(blArgs->J2 ^ blArgs->S) & 0x1;
 
+  // addressToExtract = (blArgs->S << 24) | (I1 << 23) | (I2 << 22) | (blArgs->imm10 << 12) | (blArgs->imm11 << 1) | 0;
+  // addressToExtract = addressToExtract & 0x01fffffe;
+  
+  return addressToExtract;
+}
 
 
 
