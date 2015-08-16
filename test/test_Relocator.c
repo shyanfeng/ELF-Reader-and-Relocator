@@ -86,8 +86,8 @@ void test_extractBlArguments_from_bl(void){
   
   closeFileInTxt(elfData->myFile);
 }
- 
-void test_generateRelocateArguments(void){
+
+void test_newTextSection(void){
   ElfData *elfData = openElfFile("test/Relocation_File/add.o");
   elfData->rel = getRelocation(elfData);
   
@@ -95,30 +95,7 @@ void test_generateRelocateArguments(void){
   elfData2->rel = getRelocation(elfData2);
   
   BlArguments blArgs;
-  uint32_t generateArgs = generateRelocateArguments(elfData, elfData2, &blArgs);
+  _Elf32_Shdr *newText = newTextSection(elfData, elfData2, &blArgs);
   
-}
- 
- void test_relocateNewAddress(void){
-  ElfData *elfData = openElfFile("test/Relocation_File/add.o");
-  elfData->rel = getRelocation(elfData);
-  
-  ElfData *elfData2 = openElfFile("test/Relocation_File/minus.o");
-  elfData2->rel = getRelocation(elfData2);
-  
-  BlArguments blArgs;
-  uint32_t *generateArgs = relocateNewInstruction(elfData, elfData2, &blArgs);
-  
-}
- 
-  void test_newTextSection(void){
-  ElfData *elfData = openElfFile("test/Relocation_File/add.o");
-  elfData->rel = getRelocation(elfData);
-  
-  ElfData *elfData2 = openElfFile("test/Relocation_File/minus.o");
-  elfData2->rel = getRelocation(elfData2);
-  
-  BlArguments blArgs;
-  uint32_t *new = newTextSection(elfData, elfData2, &blArgs);
-  
+  closeFileInTxt(elfData->myFile);
 }

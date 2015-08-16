@@ -132,7 +132,6 @@ uint32_t *generateBLInstruction(ElfData *elfData, char *secNameToRel){
   
   indexToRel = getIndexOfSectionByName(elfData, secNameToRel);
   instructionOfBL = (uint32_t *)elfData->programElf[indexToRel].section;
-  elfData->sectionAddress = instructionOfBL;
   
   for(i = 0; getRelType(elfData, i) != R_ARM_THM_CALL; i++);
   instructionOfBL = (uint32_t *) (((char *)instructionOfBL) + elfData->rel[i].r_offset);
@@ -252,9 +251,15 @@ uint32_t extractRelocateAddress(ElfData *elfData){
  *          contain the BL instruction that link with elfData2. The function
  *          address to extract is from elfData2.
  *
+ *  Example:
+ *          00000000 <minus>:
+ *          
+ *          So, the address of the minus need to relocate is 0x00 in 
+ *          the memory
+ *
  *  Input:
  *          elfData(ElfData structure)
- *          elfData2(ElfData structure)
+ *          elfData2(ElfData2 structure)
  *  
  *  Data:
  *          function address
@@ -292,7 +297,7 @@ uint32_t extractFunctionAddress(ElfData *elfData, ElfData *elfData2){
  *
  *  Input:
  *          elfData(ElfData structure)
- *          elfData2(ElfData structure)
+ *          elfData2(ElfData2 structure)
  *  
  *  Data:
  *          addrToLink
@@ -312,9 +317,54 @@ uint32_t generateAddressToLink(ElfData *elfData, ElfData *elfData2){
   return addrToLink;
 }
 
-uint32_t generateRelocateArguments(ElfData *elfData, ElfData *elfData2, BlArguments *blArgs){
+/******************************************************************************
+ * Generate New Instruction From Arguments
+ *
+ *  Operation:
+ *          To generate the instruction from the arguments of address to link
+ *
+ *  Example:
+ *          0xb80 is the address from function address minus relocate address,
+ *          then it will be generated to get the arguements 
+ *
+ *               S   I1 I2 |------------imm10--------------|   
+ *          bit 24 | 23 22 21 20 | 19 18 17 16 | 15 14 13 12 | 
+ *               0    0  0  0  0    0  0  0  0    0  0  0  0
+ *
+ *              |-------------imm11---------------|
+ *          bit 11 10  9  8 | 7  6  5  4 | 3  2  1  0|
+ *               1  0  1  1   1  0  0  0   0  0  0  0
+ *
+ *          S will picked from bit 24 (0)
+ *          imm10 will picked from bit 12 to 21 (00 0000 0000)
+ *          I1 will picked from bit 23 (0)
+ *          I2 will picked from bit 22 (0)
+ *          imm11 will picked from bit 1 to 11 (101 1100 0000)
+ *          J1 will extract by ~(I1 EOR S)
+ *          J2 will extract by ~(I2 EOR S)
+ *
+ *          bit 31 30 29 28 | 27 26 25 24 | 23 22 21 20 | 19 18 17 16 |
+ *               1  1  1  1    0  0  0  0    0  0  0  0    0  0  0  0
+ *          bit 15 14 13 12 | 11 10  9  8 |  7  6  5  4 |  3  2  1  0 |
+ *               1  1  0  1    0  1  0  1    1  1  0  0    0  0  0  0
+ *          
+ *          So, the instruction is f000 d5c0
+ *
+ *  Input:
+ *          elfData(ElfData structure)
+ *          elfData2(ElfData2 structure)
+ *          blArgs(BlArguments structure)
+ *  
+ *  Data:
+ *          S, imm10, J1, J2, imm11, I1, I2
+ *
+ *  Return:
+ *          instrFromGenerate
+ *
+ ******************************************************************************/
+uint32_t generateNewInstrFromArgs(ElfData *elfData, ElfData *elfData2, BlArguments *blArgs){
   int I1, I2;
-  uint32_t addressFromGenerate;
+  uint32_t instrFromGenerate;
   uint32_t extractBL = generateAddressToLink(elfData, elfData2);
 
   blArgs->S = (extractBL >>24) & 0x00000001;
@@ -325,51 +375,89 @@ uint32_t generateRelocateArguments(ElfData *elfData, ElfData *elfData2, BlArgume
   blArgs->imm10 = (extractBL  >> 12) & 0x000003ff;
   blArgs->imm11 = (extractBL >> 1) & 0x000007ff;
 
-  addressFromGenerate = blArgs->imm11 | (blArgs->J2 << 11) | (0x1 << 12) | (blArgs->J1 << 13) | (0x3 << 14) |(blArgs->imm10 << 16) | (blArgs->S << 26) | ((0x1e << 27));
-  addressFromGenerate = addressFromGenerate & 0xf7ffffff;
-  printf("addressFromGenerate = %x\n", addressFromGenerate);
-  return addressFromGenerate;
+  instrFromGenerate = blArgs->imm11 | (blArgs->J2 << 11) | (0x1 << 12) | (blArgs->J1 << 13) | (0x3 << 14) |(blArgs->imm10 << 16) | (blArgs->S << 26) | ((0x1e << 27));
+  instrFromGenerate = instrFromGenerate & 0xf7ffffff;
+ 
+  return instrFromGenerate;
 }
 
+/******************************************************************************
+ * Relocate New Instruction in the text section
+ *
+ *  Operation:
+ *          To relocate the new instruction into the text section address
+ *
+ *  Input:
+ *          elfData(ElfData structure)
+ *          elfData2(ElfData2 structure)
+ *          blArgs(BlArguments structure)
+ *  
+ *  Data:
+ *          new instruction to relocate in the text section address
+ *
+ *  Return:
+ *          newTextSecInfo
+ *
+ ******************************************************************************/
 uint32_t *relocateNewInstruction(ElfData *elfData, ElfData *elfData2, BlArguments *blArgs){
-  uint32_t *newTextInfo, relocArgs;
+  uint32_t *newTextSecInfo, relocArgs;
   int indexOfSection, i;
   
   indexOfSection = getIndexOfSectionByName(elfData, ".text");
-  newTextInfo = getSectionInfoUsingIndex(elfData, indexOfSection);
-  relocArgs = generateRelocateArguments(elfData, elfData2, blArgs);
+  newTextSecInfo = getSectionInfoUsingIndex(elfData, indexOfSection);
+  relocArgs = generateNewInstrFromArgs(elfData, elfData2, blArgs);
   
   for(i = 0; getRelType(elfData, i) != R_ARM_THM_CALL; i++);
-  newTextInfo[elfData->rel[i].r_offset] = relocArgs;
+  newTextSecInfo[elfData->rel[i].r_offset] = relocArgs;
   
-  return newTextInfo;
+  return newTextSecInfo;
 }
 
-uint32_t *newTextSection(ElfData *elfData, ElfData *elfData2, BlArguments *blArgs){
-  uint32_t *newText, *textSecToLink, section1Address, section2Address, *endOfSection1Address, endOfSection2Address;
+/******************************************************************************
+ *
+ *    Below that function is incomplete on returning a .text section 
+ *    that gather two .text section
+ *
+ ******************************************************************************/
+
+
+/******************************************************************************
+ * New .text section 
+ *
+ *  Operation:
+ *          To return a new .text section that gather elfData and elfData2
+ *
+ *  Input:
+ *          elfData(ElfData structure)
+ *          elfData2(ElfData2 structure)
+ *          blArgs(BlArguments structure)
+ *  
+ *  Data:
+ *          new .text
+ *
+ *  Return:
+ *          elfData->programElf
+ *
+ ******************************************************************************/
+_Elf32_Shdr *newTextSection(ElfData *elfData, ElfData *elfData2, BlArguments *blArgs){
+  uint32_t *newText, *textSecToLink, section1Address, section2Address, endOfSection1Address;
   int indexOfSection1, indexOfSection2, i;
   
   indexOfSection1 = getIndexOfSectionByName(elfData, ".text");
   indexOfSection2 = getIndexOfSectionByName(elfData2, ".text");
   
+  for(i = 0; getRelType(elfData, i) != R_ARM_THM_CALL; i++);
+  
   newText = relocateNewInstruction(elfData, elfData2, blArgs); 
   elfData->programElf[indexOfSection1].section = (char *)newText;
-  printf("newText = %x\n", newText[0x2c]);
-  printf("sec = %x\n", elfData->programElf[indexOfSection1].section[0x2c]);
-  printf("sec = %x\n", elfData->programElf[indexOfSection1].section[0x2d]);
-  printf("sec = %x\n", elfData->programElf[indexOfSection1].section[0x2e]);
-  printf("sec = %x\n", elfData->programElf[indexOfSection1].section[0x2f]);
-  endOfSection1Address = (uint32_t *)((elfData->programElf[indexOfSection1].section + elfData->sh[indexOfSection1].sh_size) - 1);
-  printf("endOfSection1Address = %x\n", endOfSection1Address);
-  // endOfSection1Address = (endOfSection1Address + 3) & 0xfffffffc;
-  // printf("data = %x\n", elfData->programElf[indexOfSection1].section[0x2c]);
-  // elfData->targetAddr = 0x08000000;
-  // elfData2->targetAddr = endOfSection1Address + 1;
   
+  elfData->programElf[indexOfSection1].section[elfData->rel[i].r_offset] = (newText[elfData->rel[i].r_offset] & 0xff000000) >> 24;
+  elfData->programElf[indexOfSection1].section[elfData->rel[i].r_offset + 1] = (newText[elfData->rel[i].r_offset] & 0x00ff0000) >> 16;
+  elfData->programElf[indexOfSection1].section[elfData->rel[i].r_offset + 2] = (newText[elfData->rel[i].r_offset] & 0x0000ff00) >> 8;
+  elfData->programElf[indexOfSection1].section[elfData->rel[i].r_offset + 3] = newText[elfData->rel[i].r_offset] & 0x000000ff;
+
+  endOfSection1Address = (uint32_t)((elfData->programElf[indexOfSection1].section + elfData->sh[indexOfSection1].sh_size) - 1);
+  endOfSection1Address = (endOfSection1Address + 3) & 0xfffffffc;
+  
+  return elfData->programElf;
 }
-
-
-
-
-
-
