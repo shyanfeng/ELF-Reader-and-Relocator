@@ -40,7 +40,7 @@ void test_open_file_not_exist_should_throw_error(void){
  *                    Move the file pointer
  *
  *******************************************************************/
-/*void test_inStreamMoveFilePtr(void){
+void test_inStreamMoveFilePtr(void){
   InStream *myFile;
   long int startPosition;
   long int endPosition;
@@ -53,7 +53,7 @@ void test_open_file_not_exist_should_throw_error(void){
   TEST_ASSERT_EQUAL(0, startPosition);
   
   closeFileInTxt(myFile);
-}*/
+}
 
 /*
 void test_read_bit_byteIndex_3(void){
