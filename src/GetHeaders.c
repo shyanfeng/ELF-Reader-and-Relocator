@@ -250,6 +250,31 @@ ElfData *openElfFile(char *fileName){
 }
 
 /******************************************************************************
+ * Get Section Header Address From Index
+ *
+ *  Operation:
+ *          To get the address of section header
+ *
+ *  Input:
+ *          elfData(ElfData structure)
+ *          index(index of section in section header)
+ *  
+ *  Data:
+ *          section header address
+ *
+ *  Return:
+ *          shAddr
+ *
+ ******************************************************************************/
+uint32_t getSectionHeaderAddrUsingIndex(ElfData *elfData, int index){
+  uint32_t shAddr;
+  
+  shAddr = elfData->sh[index].sh_addr;
+  
+  return shAddr;
+}
+
+/******************************************************************************
  * Get Section Index From Section Name
  *
  *  Operation:

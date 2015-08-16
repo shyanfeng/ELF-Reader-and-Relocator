@@ -24,12 +24,15 @@ uint32_t getRelType(ElfData *dataFromElf, int index);
 uint32_t *generateBLInstruction(ElfData *dataFromElf, char *secNameToRel);
 uint32_t extractBlArguments(ElfData *dataFromElf, BlArguments *blArgs);
 
-uint32_t extractAddressNeedToRelocate(ElfData *elfData);
-
+uint32_t extractRelocateAddress(ElfData *elfData);
 uint32_t extractFunctionAddress(ElfData *elfData, ElfData *elfData2);
 
-uint32_t relocateAddress(ElfData *elfData, ElfData *elfData2);
+uint32_t generateAddressToLink(ElfData *elfData, ElfData *elfData2);
 
 uint32_t generateRelocateArguments(ElfData *elfData, ElfData *elfData2, BlArguments *blArgs);
+
+uint32_t *relocateNewInstruction(ElfData *elfData, ElfData *elfData2, BlArguments *blArgs);
+
+uint32_t *newTextSection(ElfData *elfData, ElfData *elfData2, BlArguments *blArgs);
 
 #endif // Relocator_H

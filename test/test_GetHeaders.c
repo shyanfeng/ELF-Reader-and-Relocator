@@ -281,6 +281,11 @@ void test_getSymbolTables(void){
   closeFileInTxt(elfData->myFile);
 }
 
+/******************************************************************
+ *
+ *                Get Section Info Using Index
+ *
+ *****************************************************************/
 void test_getSectionInfoUsingIndex_to_get_the_section_info(void){
   ElfData *elfData = openElfFile("test/ELF_File/Test01.elf");
   uint32_t *getSectionInfo = getSectionInfoUsingIndex(elfData, 2);
@@ -312,6 +317,22 @@ void test_getAllSectionInfo_of_name_and_section(void){
   TEST_ASSERT_EQUAL_HEX8(0x47, elfData->programElf[2].section[3755]);    // Last Byte of .text
   TEST_ASSERT_EQUAL_STRING(".init_array", elfData->programElf[4].name);
   TEST_ASSERT_EQUAL_STRING(".ccmram", elfData->programElf[7].name);
+  
+  closeFileInTxt(elfData->myFile);
+}
+
+void test_getSectionHeaderAddrUsingIndex(void){
+  ElfData *elfData = openElfFile("test/ELF_File/Test01.elf");
+  uint32_t shAddr;
+  
+  shAddr = getSectionHeaderAddrUsingIndex(elfData, 0);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, shAddr);
+  
+  shAddr = getSectionHeaderAddrUsingIndex(elfData, 2);
+  TEST_ASSERT_EQUAL_HEX32(0x080001ac, shAddr);
+  
+  shAddr = getSectionHeaderAddrUsingIndex(elfData, 14);
+  TEST_ASSERT_EQUAL_HEX32(0x00000000, shAddr);
   
   closeFileInTxt(elfData->myFile);
 }
