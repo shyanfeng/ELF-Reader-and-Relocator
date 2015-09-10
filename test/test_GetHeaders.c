@@ -506,3 +506,15 @@ void test_getSymbolTableUsingIndex_with_index_289(void){
 
   closeFileInTxt(elfData->myFile);
 }
+
+void test_getElfSectionInfo(void){
+  ElfData *elfData = openElfFile("test/ELF_File/Test01.elf");
+  ElfSection *sectionInfo = getElfSectionInfo(elfData, ".isr_vector");
+  
+  TEST_ASSERT_EQUAL(1, sectionInfo->index);
+  TEST_ASSERT_EQUAL_HEX32(0x08000000, sectionInfo->destAddress);
+  TEST_ASSERT_EQUAL_HEX32(0x1ac, sectionInfo->size);
+  
+}
+
+
